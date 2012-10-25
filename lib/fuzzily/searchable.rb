@@ -44,7 +44,7 @@ module Fuzzily
 
       after_save do |record|
         next unless record.send("#{field}_changed?".to_sym)
-        self.send(update_trigrams_method)
+        record.send(update_trigrams_method)
       end
 
       class_variable_set(:"@@fuzzily_searchable_#{field}", true)

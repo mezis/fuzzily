@@ -1,6 +1,8 @@
 # Fuzzily
 
-A fast, trigram-based, database-backed fuzzy string search/match engine for Rails.
+A fast, [trigram](http://en.wikipedia.org/wiki/N-gram)-based, database-backed [fuzzy](http://en.wikipedia.org/wiki/Approximate_string_matching) string search/match engine for Rails.
+
+Loosely inspired from an [old blog post](http://unirec.blogspot.co.uk/2007/12/live-fuzzy-search-using-n-grams-in.html).
 
 ## Installation
 
@@ -18,25 +20,21 @@ Or install it yourself as:
 
 ## Usage
 
-You'll need to setup 3 things:
+You'll need to setup 2 things:
 
-- a trigram model (your search index)
-- its migration
+- a trigram model (your search index) and its migration
 - the model you want to search for
 
-Create and ActiveRecord model in your app:
+Create and ActiveRecord model in your app (this will be used to store a "fuzzy index" of all the models and fields you will be indexing):
 
     class Trigram < ActiveRecord::Base
       include Fuzzily::Model
     end
 
-Create a migration file:
+Create a migration for it:
 
     class AddTrigramsModel < ActiveRecord::Migration
       extend Fuzzily::Migration
-
-      # if you named your trigram model anything but 'Trigram', e.g. 'CustomTrigram'
-      # trigrams_table_name = :custom_trigrams
     end
 
 Instrument your model (your searchable fields do not have to be stored, they can be dynamic methods too):
@@ -56,6 +54,35 @@ Search!
 
     MyStuff.find_by_fuzzy_name('Some Name', :limit => 10)
     # => records
+
+
+
+## Indexing more than one field
+
+Just list all the field you want to index, or call `fuzzily_searchable` more than once: 
+
+    class MyStuff < ActiveRecord::Base
+      fuzzily_searchable :name_fr, :name_en
+      fuzzily_searchable :name_de
+    end
+
+
+## Custom name for the index model
+
+If you want or need to name your index model differently (e.g. because you already have a class called `Trigram`):
+
+    class CustomTrigram < ActiveRecord::Base
+      include Fuzzily::Model
+    end
+
+    class AddTrigramsModel < ActiveRecord::Migration
+      extend Fuzzily::Migration
+      trigrams_table_name = :custom_trigrams
+    end
+
+    class MyStuff < ActiveRecord::Base
+      fuzzily_searchable :name, :class_name => 'CustomTrigram'
+    end
 
 
 ## License

@@ -32,7 +32,12 @@ module Fuzzily
           when 2 then pattern, options = args
           else        raise 'Wrong # of arguments'
         end
-        Trigram.scoped(options).for_model(self.name).for_field(field).matches(pattern)
+        
+        trigram_class_name.constantize.
+          scoped(options).
+          for_model(self.name).
+          for_field(field.to_s).
+          matches_for(pattern)
       end
 
       define_method update_trigrams_method do

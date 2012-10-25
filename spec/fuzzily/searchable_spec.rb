@@ -10,10 +10,11 @@ describe Fuzzily::Searchable do
   before(:each) { prepare_owners_table   }
 
   subject do 
-    Stuff.clone.class_eval do
-      def self.name ; 'Stuff' ; end
-      self
+    silence_warnings do
+      Stuff = Class.new(ActiveRecord::Base)
     end
+    def Stuff.name ; 'Stuff' ; end
+    Stuff
   end
 
   describe '.fuzzily_searchable' do
@@ -39,14 +40,14 @@ describe Fuzzily::Searchable do
   end
 
   describe '(callbacks)' do
+    before { subject.fuzzily_searchable :name }
+
     it 'generates trigram records on creation' do
-      subject.fuzzily_searchable :name
       subject.create(:name => 'Paris')
       subject.last.trigrams_for_name.should_not be_empty
     end
 
     it 'generates the correct trigrams' do
-      subject.fuzzily_searchable :name
       record = subject.create(:name => 'FOO')
       Trigram.first.trigram.should    == '**f'
       Trigram.first.owner_id.should   == record.id
@@ -54,19 +55,35 @@ describe Fuzzily::Searchable do
     end
 
     it 'updates all trigram records on save' do
-      subject.fuzzily_searchable :name
       subject.create(:name => 'Paris')
       subject.first.update_attribute :name, 'Rome'
       Trigram.all.map(&:trigram).should =~ %w(**r *ro rom ome)
     end
   end
 
-  describe '#find_by_fuzzy_<field>' do
-    it 'works'
+  describe '#update_fuzzy_<field>!' do
+    it 're-creates trigrams' do
+      subject.fuzzily_searchable :name
+      subject.create(:name => 'Paris')
+      old_ids = Trigram.all.map(&:id)
+      subject.last.update_fuzzy_name!
+      (old_ids & Trigram.all.map(&:id)).should be_empty
+    end
   end
 
-  describe '#update_fuzzy_<field>!' do
-    it 'works'
+  context '(integrationg test)' do
+    describe '#find_by_fuzzy_<field>' do
+      it 'returns records' do
+        subject.fuzzily_searchable :name
+        @paris =   subject.create(:name => 'Paris')
+        @palma =   subject.create(:name => 'Palma de Majorca')
+        @palmyre = subject.create(:name => 'La Palmyre')
+
+        subject.find_by_fuzzy_name('Piris').should_not be_empty
+        subject.find_by_fuzzy_name('Piris').should =~ [@paris, @palma]
+        subject.find_by_fuzzy_name('Paradise').should =~ [@paris, @palma, @palmyre]
+      end
+    end
   end
 
 end

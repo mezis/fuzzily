@@ -24,7 +24,8 @@ module Fuzzily
         :class_name => trigram_class_name,
         :as => :owner,
         :conditions => { :fuzzy_field => field.to_s },
-        :dependent => :destroy
+        :dependent => :destroy,
+        :autosave => true
 
       singleton_class.send(:define_method,"find_by_fuzzy_#{field}".to_sym) do |*args|
         case args.size
@@ -32,7 +33,7 @@ module Fuzzily
           when 2 then pattern, options = args
           else        raise 'Wrong # of arguments'
         end
-        
+
         trigram_class_name.constantize.
           scoped(options).
           for_model(self.name).
@@ -40,10 +41,33 @@ module Fuzzily
           matches_for(pattern)
       end
 
+      singleton_class.send(:define_method,"bulk_update_fuzzy_#{field}".to_sym) do
+        trigram_class = trigram_class_name.constantize
+
+        self.scoped(:include => trigram_association).find_in_batches(:batch_size => 100) do |batch|
+          inserts = []
+          batch.each do |record|
+            record.send(field).extend(String).trigrams.each do |trigram|
+              inserts << sanitize_sql_array(['(?,?,?,?,?)', self.name, record.id, field.to_s, 1, trigram])
+            end
+          end
+
+          trigram_class.transaction do
+            batch.each { |record| record.send(trigram_association).delete_all }
+            trigram_class.connection.insert(%Q{
+              INSERT INTO `#{trigram_class.table_name}`
+              (`owner_type`, `owner_id`, `fuzzy_field`, `score`, `trigram`)
+              VALUES
+              #{inserts.join(", ")}
+            })
+          end
+        end
+      end
+
       define_method update_trigrams_method do
-        self.send(trigram_association).destroy_all
+        self.send(trigram_association).delete_all
         self.send(field).extend(String).trigrams.each do |trigram|
-          self.send(trigram_association).create!(:score => 1, :trigram => trigram)
+          self.send(trigram_association).create!(:score => 1, :trigram => trigram, :owner_type => self.class.name)
         end
       end
 

@@ -1,5 +1,5 @@
 PATH
-  remote: .
+  remote: /Users/mezis/Dropbox/Development/fuzzily
   specs:
     fuzzily (0.1.0)
       activerecord (>= 2.3.17)
@@ -51,6 +51,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activerecord (~> 3.2.0)
   appraisal
   fuzzily!
   pry

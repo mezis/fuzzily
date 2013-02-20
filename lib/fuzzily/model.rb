@@ -5,6 +5,9 @@ module Fuzzily
 
     def self.included(by)
       by.ancestors.include?(ActiveRecord::Base) or raise 'Not included in an ActiveRecord subclass'
+
+      scope_method = ActiveRecord::VERSION::MAJOR == 2 ? :named_scope : :scope
+
       by.class_eval do
         return if class_variable_defined?(:@@fuzzily_trigram_model)
 
@@ -15,13 +18,13 @@ module Fuzzily
         validates_presence_of     :score
         validates_presence_of     :fuzzy_field
 
-        named_scope :for_model,  lambda { |model| { 
+        send scope_method, :for_model,  lambda { |model| { 
           :conditions => { :owner_type => model.kind_of?(Class) ? model.name : model  } 
         }}
-        named_scope :for_field,  lambda { |field_name| {
+        send scope_method, :for_field,  lambda { |field_name| {
           :conditions => { :fuzzy_field => field_name }
         }}
-        named_scope :with_trigram, lambda { |trigrams| {
+        send scope_method, :with_trigram, lambda { |trigrams| {
           :conditions => { :trigram => trigrams }
         }}
 

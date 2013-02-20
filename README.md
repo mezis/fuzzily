@@ -4,6 +4,8 @@ A fast, [trigram](http://en.wikipedia.org/wiki/N-gram)-based, database-backed [f
 
 Loosely inspired from an [old blog post](http://unirec.blogspot.co.uk/2007/12/live-fuzzy-search-using-n-grams-in.html).
 
+Compatible with ActiveRecord 2.3, 3.0, 3.1, 3.2.
+
 ## Installation
 
 Add this line to your application's Gemfile:

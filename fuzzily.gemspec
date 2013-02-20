@@ -12,9 +12,10 @@ Gem::Specification.new do |gem|
   gem.summary       = %q{A fast, trigram-based, database-backed fuzzy string search/match engine for Rails.}
   gem.homepage      = ""
 
-  gem.add_runtime_dependency 'activerecord', '~> 2.3'
+  gem.add_runtime_dependency 'activerecord', '>= 2.3.17'
 
   gem.add_development_dependency 'rspec'
+  gem.add_development_dependency 'rake'
   gem.add_development_dependency 'appraisal'
   gem.add_development_dependency 'pry'
   gem.add_development_dependency 'pry-nav'

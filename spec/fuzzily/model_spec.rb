@@ -4,6 +4,8 @@ describe Fuzzily::Model do
   subject do
     Class.new(ActiveRecord::Base).tap do |model|
       model.table_name = :trigrams
+
+      def model.name ; 'MyModel' ; end
     end
   end
 

@@ -48,9 +48,7 @@ Instrument your model (your searchable fields do not have to be stored, they can
 
 Index your model (will happen automatically for new/updated records):
 
-    MyStuff.find_each do |record|
-      record.update_fuzzy_name!
-    end
+    MyStuff.bulk_update_fuzzy_name
 
 Search!
 

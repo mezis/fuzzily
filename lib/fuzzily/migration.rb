@@ -15,7 +15,7 @@ module Fuzzily
         def up
           create_table trigrams_table_name do |t|
             t.string  :trigram, :limit => 3
-            t.integer :score
+            t.integer :score,   :limit => 2
             t.integer :owner_id
             t.string  :owner_type
             t.string  :fuzzy_field

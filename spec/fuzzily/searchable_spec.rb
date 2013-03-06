@@ -83,6 +83,16 @@ describe Fuzzily::Searchable do
         subject.find_by_fuzzy_name('Piris').should =~ [@paris, @palma]
         subject.find_by_fuzzy_name('Paradise').should =~ [@paris, @palma, @palmyre]
       end
+
+      it 'favours exact matches' do
+        subject.fuzzily_searchable :name
+        @new_york   = subject.create(:name => 'New York')
+        @yorkshire  = subject.create(:name => 'Yorkshire')
+        @york       = subject.create(:name => 'York')
+        @yorkisthan = subject.create(:name => 'Yorkisthan')
+
+        subject.find_by_fuzzy_name('York').should == [@york, @yorkshire, @yorkisthan, @new_york]
+      end
     end
   end
 

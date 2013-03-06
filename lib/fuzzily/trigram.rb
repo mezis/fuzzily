@@ -4,7 +4,14 @@ module Fuzzily
   module String
     def trigrams
       normalized = self.normalize
-      (0..(normalized.length - 3)).map { |index| normalized[index,3] }.uniq
+      number_of_trigrams = normalized.length - 3
+      trigrams = (0..number_of_trigrams).map { |index| normalized[index,3] }.uniq
+    end
+
+    def scored_trigrams
+      trigrams_ = self.trigrams
+      score = 32_768 / trigrams_.length
+      trigrams_.map { |t| [t, score] }
     end
 
     protected

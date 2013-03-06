@@ -47,8 +47,8 @@ module Fuzzily
         self.scoped(:include => trigram_association).find_in_batches(:batch_size => 100) do |batch|
           inserts = []
           batch.each do |record|
-            record.send(field).extend(String).trigrams.each do |trigram|
-              inserts << sanitize_sql_array(['(?,?,?,?,?)', self.name, record.id, field.to_s, 1, trigram])
+            record.send(field).extend(String).scored_trigrams.each do |trigram, score|
+              inserts << sanitize_sql_array(['(?,?,?,?,?)', self.name, record.id, field.to_s, score, trigram])
             end
           end
 
@@ -66,8 +66,8 @@ module Fuzzily
 
       define_method update_trigrams_method do
         self.send(trigram_association).delete_all
-        self.send(field).extend(String).trigrams.each do |trigram|
-          self.send(trigram_association).create!(:score => 1, :trigram => trigram, :owner_type => self.class.name)
+        self.send(field).extend(String).scored_trigrams.each do |trigram, score|
+          self.send(trigram_association).create!(:score => score, :trigram => trigram, :owner_type => self.class.name)
         end
       end
 

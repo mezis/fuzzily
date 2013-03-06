@@ -85,6 +85,21 @@ If you want or need to name your index model differently (e.g. because you alrea
     end
 
 
+## Speeding things up
+
+For large data sets (millions of rows to index), the "compatible" storage
+used by default will typically no longer be enough to keep the index small
+enough.
+
+Users have reported **major improvements** (2 order of magniture) when turning
+the `owner_type` and `fuzzy_field` columns of the `trigrams` table from
+`VARCHAR` (the default) into `ENUM`. This is particularly efficient with
+MySQL and pgSQL.
+
+This is not the default in the gem as ActiveRecord does not suport `ENUM`
+columns in any version
+
+
 ## License
 
 MIT licence. Quite permissive if you ask me.

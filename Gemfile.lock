@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    fuzzily (0.1.0)
+    fuzzily (0.2.0)
       activerecord (>= 2.3.17)
 
 GEM

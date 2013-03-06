@@ -1,5 +1,8 @@
 # Fuzzily
 
+[![Build Status](https://travis-ci.org/mezis/fuzzily.png?branch=master)](https://travis-ci.org/mezis/fuzzily)
+[![Dependency Status](https://gemnasium.com/mezis/fuzzily.png)](https://gemnasium.com/mezis/fuzzily)
+
 A fast, [trigram](http://en.wikipedia.org/wiki/N-gram)-based, database-backed [fuzzy](http://en.wikipedia.org/wiki/Approximate_string_matching) string search/match engine for Rails.
 
 Loosely inspired from an [old blog post](http://unirec.blogspot.co.uk/2007/12/live-fuzzy-search-using-n-grams-in.html).

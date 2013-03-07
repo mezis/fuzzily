@@ -91,7 +91,16 @@ describe Fuzzily::Searchable do
         @york       = subject.create(:name => 'York')
         @yorkisthan = subject.create(:name => 'Yorkisthan')
 
-        subject.find_by_fuzzy_name('York').should == [@york, @yorkshire, @yorkisthan, @new_york]
+        subject.find_by_fuzzy_name('York').should      == [@york, @yorkshire, @yorkisthan, @new_york]
+        subject.find_by_fuzzy_name('Yorkshire').should == [@yorkshire, @york, @yorkisthan, @new_york]
+      end
+
+      it 'does not favour short words' do
+        subject.fuzzily_searchable :name
+        @lo     = subject.create(:name => 'Lo')      # **l *lo
+        @london = subject.create(:name => 'London')  # **l *lo lon ond ndo don
+                                                     # **l *lo lon
+        subject.find_by_fuzzy_name('Lon').should == [@london, @lo]
       end
     end
   end

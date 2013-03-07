@@ -42,9 +42,9 @@ module Fuzzily
       def matches_for(text, options = {})
         options[:limit] ||= 10
         self.
-          scoped(:select => 'owner_id, owner_type, SUM(score) AS total_score').
+          scoped(:select => 'owner_id, owner_type, count(*) AS matches, score').
           scoped(:group => :owner_id).
-          scoped(:order => 'total_score DESC').
+          scoped(:order => 'matches DESC, score ASC').
           scoped(:limit => options[:limit]).
           with_trigram(text.extend(String).trigrams).
           map(&:owner)

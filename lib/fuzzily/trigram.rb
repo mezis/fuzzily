@@ -10,9 +10,7 @@ module Fuzzily
 
     def scored_trigrams
       trigrams_ = self.trigrams
-      return [] if trigrams_.empty?
-      score = 32_768 / trigrams_.length
-      trigrams_.map { |t| [t, score] }
+      trigrams_.map { |t| [t, trigrams_.length] }
     end
 
     protected

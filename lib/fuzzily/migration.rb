@@ -21,11 +21,12 @@ module Fuzzily
             t.string  :fuzzy_field
           end
 
+          # owner_id goes first as we'll GROUP BY that
           add_index trigrams_table_name,
-            [:owner_type, :fuzzy_field, :trigram, :owner_id, :score],
+            [:owner_id, :owner_type, :fuzzy_field, :trigram, :score],
             :name => :index_for_match
           add_index trigrams_table_name,
-            [:owner_type, :owner_id],
+            [:owner_id, :owner_type],
             :name => :index_by_owner
         end
 

@@ -57,7 +57,7 @@ describe Fuzzily::Searchable do
     it 'updates all trigram records on save' do
       subject.create(:name => 'Paris')
       subject.first.update_attribute :name, 'Rome'
-      Trigram.all.map(&:trigram).should =~ %w(**r *ro rom ome)
+      Trigram.all.map(&:trigram).should =~ %w(**r *ro rom ome me*)
     end
   end
 
@@ -91,14 +91,14 @@ describe Fuzzily::Searchable do
         @york       = subject.create(:name => 'York')
         @yorkisthan = subject.create(:name => 'Yorkisthan')
 
-        subject.find_by_fuzzy_name('York').should      == [@york, @yorkshire, @yorkisthan, @new_york]
+        subject.find_by_fuzzy_name('York').should      == [@york, @new_york, @yorkshire, @yorkisthan]
         subject.find_by_fuzzy_name('Yorkshire').should == [@yorkshire, @york, @yorkisthan, @new_york]
       end
 
       it 'does not favour short words' do
         subject.fuzzily_searchable :name
-        @lo     = subject.create(:name => 'Lo')      # **l *lo
-        @london = subject.create(:name => 'London')  # **l *lo lon ond ndo don
+        @lo     = subject.create(:name => 'Lo')      # **l *lo lo*
+        @london = subject.create(:name => 'London')  # **l *lo lon ond ndo don on*
                                                      # **l *lo lon
         subject.find_by_fuzzy_name('Lon').should == [@london, @lo]
       end

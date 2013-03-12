@@ -36,7 +36,7 @@ module Fuzzily
 
     module ClassMethods
       def matches_for(text)
-        trigrams = Fuzzily::String.new(text).scored_trigrams.map(&:first)
+        trigrams = Fuzzily::String.new(text).trigrams
         self.
           scoped(:select => 'owner_id, owner_type, count(*) AS matches, score').
           scoped(:group => :owner_id).

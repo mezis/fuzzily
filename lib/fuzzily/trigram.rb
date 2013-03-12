@@ -1,7 +1,8 @@
 require 'active_support/core_ext/string/multibyte'
-
+require 'delegate'
 module Fuzzily
-  module String
+  class String < SimpleDelegator
+
     def trigrams
       normalized = self.normalize
       number_of_trigrams = normalized.length - 3
@@ -9,8 +10,7 @@ module Fuzzily
     end
 
     def scored_trigrams
-      trigrams_ = self.trigrams
-      trigrams_.map { |t| [t, trigrams_.length] }
+      trigrams.map { |t| [t, self.length] }
     end
 
     protected
@@ -21,9 +21,10 @@ module Fuzzily
       # Iconv.iconv('ascii//translit//ignore', 'utf-8', self).first.
       ActiveSupport::Multibyte::Chars.new(self).
         mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s.
-        gsub(/\W/,' ').
+        gsub(/[^a-z]/,' ').
         gsub(/\s+/,'*').
-        gsub(/^/,'**')
+        gsub(/^/,'**').
+        gsub(/$/,'*')
     end
   end
 end

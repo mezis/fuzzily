@@ -34,6 +34,8 @@ module Fuzzily
           else        raise 'Wrong # of arguments'
         end
 
+        options[:limit] ||= 10
+
         trigram_class_name.constantize.
           scoped(options).
           for_model(self.name).

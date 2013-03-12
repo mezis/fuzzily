@@ -35,18 +35,13 @@ module Fuzzily
     end
 
     module ClassMethods
-      # options:
-      # - model (mandatory)
-      # - field (mandatory)
-      # - limit (default 10)
-      def matches_for(text, options = {})
-        options[:limit] ||= 10
+      def matches_for(text)
+        trigrams = Fuzzily::String.new(text).scored_trigrams.map(&:first)
         self.
           scoped(:select => 'owner_id, owner_type, count(*) AS matches, score').
           scoped(:group => :owner_id).
           scoped(:order => 'matches DESC, score ASC').
-          scoped(:limit => options[:limit]).
-          with_trigram(text.extend(String).trigrams).
+          with_trigram(trigrams).
           map(&:owner)
       end
     end

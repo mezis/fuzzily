@@ -68,10 +68,6 @@ describe Fuzzily::Model do
           end
         end
 
-        it 'honors the limit option' do
-          model.matches_for('Palmyre', :limit => 1).should == [@palma]
-        end
-
         it 'returns ordered results' do
           model.matches_for('Palmyre').should == [@palma, @paris]
         end

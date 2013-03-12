@@ -13,7 +13,7 @@ module Fuzzily
 
         belongs_to :owner, :polymorphic => true
         validates_presence_of     :owner
-        validates_uniqueness_of   :trigram, :scope => [:owner_type, :owner_id]
+        validates_uniqueness_of   :trigram, :scope => [:owner_type, :owner_id, :fuzzy_field]
         validates_length_of       :trigram, :is => 3
         validates_presence_of     :score
         validates_presence_of     :fuzzy_field

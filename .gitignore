@@ -17,3 +17,7 @@ tmp
 
 # CTags
 .tags*
+
+# Data
+*.gz
+*.bz2

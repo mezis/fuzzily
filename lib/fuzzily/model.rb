@@ -18,8 +18,8 @@ module Fuzzily
         validates_presence_of     :score
         validates_presence_of     :fuzzy_field
 
-        send scope_method, :for_model,  lambda { |model| { 
-          :conditions => { :owner_type => model.kind_of?(Class) ? model.name : model  } 
+        send scope_method, :for_model,  lambda { |model| {
+          :conditions => { :owner_type => model.kind_of?(Class) ? model.name : model  }
         }}
         send scope_method, :for_field,  lambda { |field_name| {
           :conditions => { :fuzzy_field => field_name }
@@ -39,7 +39,7 @@ module Fuzzily
         trigrams = Fuzzily::String.new(text).trigrams
         self.
           scoped(:select => 'owner_id, owner_type, count(*) AS matches, score').
-          scoped(:group => :owner_id).
+          scoped(:group => [:owner_id, :owner_type, :score]).
           scoped(:order => 'matches DESC, score ASC').
           with_trigram(trigrams).
           map(&:owner)

@@ -57,9 +57,11 @@ module Fuzzily
 
           trigram_class.transaction do
             batch.each { |record| record.send(trigram_association).delete_all }
-            trigram_class.connection.insert(%Q{
-              INSERT INTO `#{trigram_class.table_name}`
-              (`owner_type`, `owner_id`, `fuzzy_field`, `score`, `trigram`)
+
+            conn = trigram_class.connection
+            conn.insert(%Q{
+              INSERT INTO #{conn.quote_table_name(trigram_class.table_name)}
+              (#{conn.quote_column_name('owner_type')}, #{conn.quote_column_name('owner_id')}, #{conn.quote_column_name('fuzzy_field')}, #{conn.quote_column_name('score')}, #{conn.quote_column_name('trigram')})
               VALUES
               #{inserts.join(", ")}
             })

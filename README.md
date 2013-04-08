@@ -1,13 +1,23 @@
-# Fuzzily
+# Fuzzily - fuzzy string matching for ActiveRecord
 
 [![Build Status](https://travis-ci.org/mezis/fuzzily.png?branch=master)](https://travis-ci.org/mezis/fuzzily)
 [![Dependency Status](https://gemnasium.com/mezis/fuzzily.png)](https://gemnasium.com/mezis/fuzzily)
 
-A fast, [trigram](http://en.wikipedia.org/wiki/N-gram)-based, database-backed [fuzzy](http://en.wikipedia.org/wiki/Approximate_string_matching) string search/match engine for Rails.
+> Show me photos of **Marakech** !
+>
+> Here aresome photos of **Marrakesh**, Morroco.
+> Did you mean **Martanesh**, Albania, **Marakkanam**, India, or **Marasheshty**, Romania?
 
+Blurrily finds misspelled, prefix, or partial needles in a haystack of
+strings. It's a fast, [trigram](http://en.wikipedia.org/wiki/N-gram)-based, database-backed [fuzzy](http://en.wikipedia.org/wiki/Approximate_string_matching) string search/match engine for Rails.
 Loosely inspired from an [old blog post](http://unirec.blogspot.co.uk/2007/12/live-fuzzy-search-using-n-grams-in.html).
 
-Compatible with ActiveRecord 2.3, 3.0, 3.1, 3.2.
+Works with ActiveRecord 2.3, 3.0, 3.1, 3.2 on various Rubies.
+
+If your dateset is big, if you need yet more speed, or do not use ActiveRecord,
+check out [blurrily](http://github.com/mezis/blurrily), another gem (backed with a C extension)
+with the same intent.  
+
 
 ## Installation
 
@@ -100,7 +110,7 @@ the `owner_type` and `fuzzy_field` columns of the `trigrams` table from
 MySQL and pgSQL.
 
 This is not the default in the gem as ActiveRecord does not suport `ENUM`
-columns in any version
+columns in any version.
 
 
 ## License

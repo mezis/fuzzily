@@ -1,5 +1,6 @@
 # Fuzzily - fuzzy string matching for ActiveRecord
 
+[![Gem Version](https://badge.fury.io/rb/fuzzily.png)](http://badge.fury.io/rb/fuzzily)
 [![Build Status](https://travis-ci.org/mezis/fuzzily.png?branch=master)](https://travis-ci.org/mezis/fuzzily)
 [![Dependency Status](https://gemnasium.com/mezis/fuzzily.png)](https://gemnasium.com/mezis/fuzzily)
 [![Code Climate](https://codeclimate.com/github/mezis/fuzzily.png)](https://codeclimate.com/github/mezis/fuzzily)

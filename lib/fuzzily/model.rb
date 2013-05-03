@@ -39,7 +39,7 @@ module Fuzzily
         trigrams = Fuzzily::String.new(text).trigrams
         self.
           scoped(:select => 'owner_id, owner_type, count(*) AS matches, MAX(score) AS score').
-          scoped(:group => [:owner_id, :owner_type]).
+          scoped(:group => 'owner_id, owner_type').
           scoped(:order => 'matches DESC, score ASC').
           with_trigram(trigrams).
           map(&:owner)

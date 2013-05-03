@@ -19,7 +19,7 @@ describe Fuzzily::Migration do
     subject.trigrams_table_name = :foobars
     silence_stream(STDOUT) { subject.up }
     expect {
-      ActiveRecord::Base.connection.execute('INSERT INTO `foobars` (score) VALUES (1)')
+      ActiveRecord::Base.connection.execute('INSERT INTO foobars (score) VALUES (1)')
     }.to_not raise_error
   end
 

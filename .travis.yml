@@ -7,3 +7,6 @@ gemfile:
   - gemfiles/rails30.gemfile
   - gemfiles/rails31.gemfile
   - gemfiles/rails32.gemfile
+  - gemfiles/rails32_pg.gemfile
+before_script:
+  - psql -c 'create database fuzzily_test;' -U postgres

@@ -13,3 +13,7 @@ end
 appraise "rails32" do
   gem "activerecord", "~> 3.2.0"
 end
+
+appraise "rails32-pg" do
+  gem "activerecord", "~> 3.2.0"
+end

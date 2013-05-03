@@ -14,7 +14,7 @@ Blurrily finds misspelled, prefix, or partial needles in a haystack of
 strings. It's a fast, [trigram](http://en.wikipedia.org/wiki/N-gram)-based, database-backed [fuzzy](http://en.wikipedia.org/wiki/Approximate_string_matching) string search/match engine for Rails.
 Loosely inspired from an [old blog post](http://unirec.blogspot.co.uk/2007/12/live-fuzzy-search-using-n-grams-in.html).
 
-Works with ActiveRecord 2.3, 3.0, 3.1, 3.2 on various Rubies.
+Works with ActiveRecord 2.3, 3.0, 3.1, 3.2 on various Rubies; tested with SQLite, MySQL, and PostGreSQL.
 
 If your dateset is big, if you need yet more speed, or do not use ActiveRecord,
 check out [blurrily](http://github.com/mezis/blurrily), another gem (backed with a C extension)

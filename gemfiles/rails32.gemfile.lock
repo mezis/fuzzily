@@ -1,7 +1,7 @@
 PATH
   remote: /Users/mezis/Dropbox/Development/fuzzily
   specs:
-    fuzzily (0.1.0)
+    fuzzily (0.2.1)
       activerecord (>= 2.3.17)
 
 GEM
@@ -28,6 +28,8 @@ GEM
     i18n (0.6.1)
     method_source (0.8.1)
     multi_json (1.6.1)
+    mysql2 (0.3.11)
+    pg (0.15.1)
     pry (0.9.12)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
@@ -54,6 +56,8 @@ DEPENDENCIES
   activerecord (~> 3.2.0)
   appraisal
   fuzzily!
+  mysql2
+  pg
   pry
   pry-nav
   rake

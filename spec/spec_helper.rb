@@ -23,10 +23,24 @@ end
 RSpec.configure do |config|
   config.before(:each) do
     # Setup test database
-    ActiveRecord::Base.establish_connection(
-      :adapter  => 'sqlite3',
-      :database => Database.to_s
-    )
+
+    if ENV['FUZZILY_USE_PG']
+      ActiveRecord::Base.establish_connection(
+        :adapter  => 'postgresql',
+        :database => 'fuzzily_test',
+        :host => 'localhost',
+        :username => 'postgres'
+      )
+
+      ActiveRecord::Base.connection.execute 'DROP TABLE IF EXISTS trigrams;'
+      ActiveRecord::Base.connection.execute 'DROP TABLE IF EXISTS stuffs;'
+      ActiveRecord::Base.connection.execute 'DROP TABLE IF EXISTS foobars;'
+    else
+      ActiveRecord::Base.establish_connection(
+        :adapter  => 'sqlite3',
+        :database => Database.to_s
+      )
+    end
 
     def prepare_trigrams_table
       silence_stream(STDOUT) do
@@ -43,6 +57,8 @@ RSpec.configure do |config|
   end
 
   config.after(:each) do
-    Database.delete if Database.exist?
+    unless ENV['FUZZILY_USE_PG']
+      Database.delete if Database.exist?
+    end
   end
 end

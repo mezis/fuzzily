@@ -1,6 +1,9 @@
 require 'fuzzily'
 require 'pathname'
 require 'yaml'
+require 'coveralls'
+
+Coveralls.wear!
 
 Database = Pathname.new 'test.sqlite3'
 

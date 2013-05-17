@@ -4,6 +4,7 @@
 [![Build Status](https://travis-ci.org/mezis/fuzzily.png?branch=master)](https://travis-ci.org/mezis/fuzzily)
 [![Dependency Status](https://gemnasium.com/mezis/fuzzily.png)](https://gemnasium.com/mezis/fuzzily)
 [![Code Climate](https://codeclimate.com/github/mezis/fuzzily.png)](https://codeclimate.com/github/mezis/fuzzily)
+[![Coverage Status](https://coveralls.io/repos/mezis/fuzzily/badge.png?branch=coveralls)](https://coveralls.io/r/mezis/fuzzily?branch=coveralls)
 
 > Show me photos of **Marakech** !
 >

@@ -57,12 +57,21 @@ module Fuzzily
 
           trigram_class.transaction do
             batch.each { |record| record.send(trigram_association).delete_all }
-            trigram_class.connection.insert(%Q{
-              INSERT INTO `#{trigram_class.table_name}`
-              (`owner_type`, `owner_id`, `fuzzy_field`, `score`, `trigram`)
-              VALUES
-              #{inserts.join(", ")}
-            })
+            unless ActiveRecord::Base.connection.instance_of? ActiveRecord::ConnectionAdapters::PostgreSQLAdapter then
+              trigram_class.connection.insert(%Q{
+                INSERT INTO `#{trigram_class.table_name}`
+                (`owner_type`, `owner_id`, `fuzzy_field`, `score`, `trigram`)
+                VALUES
+                #{inserts.join(", ")}
+              })
+            else   #can't use backticks because they're not supported
+              trigram_class.connection.insert(%Q{
+                INSERT INTO #{trigram_class.table_name}
+                (owner_type, owner_id, fuzzy_field, score, trigram)
+                VALUES
+                #{inserts.join(", ")}
+              })
+            end
           end
         end
       end

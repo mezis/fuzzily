@@ -2,6 +2,8 @@ module Fuzzily
   module Model
     # Needs fields: trigram, owner_type, owner_id, score
     # Needs index on [owner_type, trigram] and [owner_type, owner_id]
+    
+
 
     def self.included(by)
       by.ancestors.include?(ActiveRecord::Base) or raise 'Not included in an ActiveRecord subclass'
@@ -10,7 +12,9 @@ module Fuzzily
 
       by.class_eval do
         return if class_variable_defined?(:@@fuzzily_trigram_model)
-
+        
+        attr_accessible: :trigram, :owner_type, :score
+          
         belongs_to :owner, :polymorphic => true
         validates_presence_of     :owner
         validates_uniqueness_of   :trigram, :scope => [:owner_type, :owner_id, :fuzzy_field]

@@ -76,9 +76,9 @@ describe Fuzzily::Searchable do
 
     it 'creates all trigrams' do
       subject.create(:name => 'Paris')
-      old_ids = Trigram.all.map(&:id)
+      Trigram.delete_all
       subject.bulk_update_fuzzy_name
-      (old_ids & Trigram.all.map(&:id)).should be_empty
+      Trigram.all.should_not be_empty
     end
   end
 

@@ -5,7 +5,37 @@ require 'coveralls'
 
 Coveralls.wear!
 
-Database = Pathname.new 'test.sqlite3'
+DATABASE = Pathname.new 'test.sqlite3'
+
+# def get_adapter
+#   ENV.fetch('FUZZILY_ADAPTER', 'sqlite3')
+# end
+
+# Database connection hashes
+def get_connection_hash
+  case ENV.fetch('FUZZILY_ADAPTER', 'sqlite3')
+  when 'postgresql'
+    {
+      :adapter      => 'postgresql',
+      :database     => 'fuzzily_test',
+      :host         => 'localhost',
+      :min_messages => 'warning',
+      :username     => ENV['FUZZILY_DB_USER']
+    }
+  when 'mysql'
+    {
+      :adapter  => 'mysql2',
+      :database => 'fuzzily_test',
+      :host     => 'localhost',
+      :user     => ENV['FUZZILY_DB_USER']
+    }
+  when 'sqlite3'
+    {
+      :adapter  => 'sqlite3',
+      :database => DATABASE.to_s
+    }
+  end
+end
 
 # A test model we'll need as a source of trigrams
 class Stuff < ActiveRecord::Base ; end
@@ -25,24 +55,11 @@ end
 
 RSpec.configure do |config|
   config.before(:each) do
-    # Setup test database
+    # Connect to & cleanup test database
+    ActiveRecord::Base.establish_connection(get_connection_hash)
 
-    if ENV['FUZZILY_USE_PG']
-      ActiveRecord::Base.establish_connection(
-        :adapter  => 'postgresql',
-        :database => 'fuzzily_test',
-        :host => 'localhost',
-        :username => 'postgres'
-      )
-
-      ActiveRecord::Base.connection.execute 'DROP TABLE IF EXISTS trigrams;'
-      ActiveRecord::Base.connection.execute 'DROP TABLE IF EXISTS stuffs;'
-      ActiveRecord::Base.connection.execute 'DROP TABLE IF EXISTS foobars;'
-    else
-      ActiveRecord::Base.establish_connection(
-        :adapter  => 'sqlite3',
-        :database => Database.to_s
-      )
+    %w(trigrams stuffs foobars).each do |table_name|
+      ActiveRecord::Base.connection.execute "DROP TABLE IF EXISTS #{table_name};"
     end
 
     def prepare_trigrams_table
@@ -60,8 +77,6 @@ RSpec.configure do |config|
   end
 
   config.after(:each) do
-    unless ENV['FUZZILY_USE_PG']
-      Database.delete if Database.exist?
-    end
+    DATABASE.delete if DATABASE.exist?
   end
 end

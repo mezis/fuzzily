@@ -15,7 +15,7 @@ Blurrily finds misspelled, prefix, or partial needles in a haystack of
 strings. It's a fast, [trigram](http://en.wikipedia.org/wiki/N-gram)-based, database-backed [fuzzy](http://en.wikipedia.org/wiki/Approximate_string_matching) string search/match engine for Rails.
 Loosely inspired from an [old blog post](http://unirec.blogspot.co.uk/2007/12/live-fuzzy-search-using-n-grams-in.html).
 
-Works with ActiveRecord 2.3, 3.0, 3.1, 3.2 on various Rubies; tested with SQLite, MySQL, and PostGreSQL.
+Tested with ActiveRecord (2.3, 3.0, 3.1, 3.2) on various Rubies (1.8.7, 1.9.2, 1.9.3, 2.0.0) and the most common adapters (SQLite3, MySQL, and PostgreSQL).
 
 If your dateset is big, if you need yet more speed, or do not use ActiveRecord,
 check out [blurrily](http://github.com/mezis/blurrily), another gem (backed with a C extension)
@@ -126,4 +126,7 @@ MIT licence. Quite permissive if you ask me.
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+5. Create a new Pull Request
+
+
+Thanks to @bclennox and @fdegiuli for helping fix compatibility issues.

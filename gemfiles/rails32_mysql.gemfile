@@ -6,5 +6,5 @@ gem "activerecord", "~> 3.2.0"
 
 gemspec :path=>"../"
 
-ENV['FUZZILY_ADAPTER'] = 'postgresql'
-ENV['FUZZILY_DB_USER'] = ENV['TRAVIS'] ? 'postgres' : ENV['USER']
+ENV['FUZZILY_ADAPTER'] = 'mysql'
+ENV['FUZZILY_DB_USER'] = ENV['TRAVIS'] ? 'travis' : 'root'

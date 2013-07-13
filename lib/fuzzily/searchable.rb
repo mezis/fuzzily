@@ -55,14 +55,23 @@ module Fuzzily
             end
           end
 
+          # take care of quoting
+          c = trigram_class.connection
+          insert_sql = %Q{
+            INSERT INTO %s (%s, %s, %s, %s, %s)
+            VALUES
+          } % [
+            c.quote_table_name(trigram_class.table_name),
+            c.quote_column_name('owner_type'),
+            c.quote_column_name('owner_id'),
+            c.quote_column_name('fuzzy_field'),
+            c.quote_column_name('score'),
+            c.quote_column_name('trigram')
+          ]
+
           trigram_class.transaction do
             batch.each { |record| record.send(trigram_association).delete_all }
-            trigram_class.connection.insert(%Q{
-              INSERT INTO #{trigram_class.table_name}
-              (owner_type, owner_id, fuzzy_field, score, trigram)
-              VALUES
-              #{inserts.join(", ")}
-            })
+            trigram_class.connection.insert(insert_sql + inserts.join(", "))
           end
         end
       end

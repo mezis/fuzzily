@@ -71,6 +71,17 @@ describe Fuzzily::Searchable do
     end
   end
 
+  describe '.bulk_update_fuzzy_<field>' do
+    before { subject.fuzzily_searchable :name }
+
+    it 'creates all trigrams' do
+      subject.create(:name => 'Paris')
+      old_ids = Trigram.all.map(&:id)
+      subject.bulk_update_fuzzy_name
+      (old_ids & Trigram.all.map(&:id)).should be_empty
+    end
+  end
+
   context '(integrationg test)' do
     describe '#find_by_fuzzy_<field>' do
       it 'returns records' do

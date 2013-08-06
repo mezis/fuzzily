@@ -54,6 +54,7 @@ module Fuzzily
           inserts = []
           batch.each do |record|
             data = Fuzzily::String.new(record.send(field))
+            return if data.blank?
             data.scored_trigrams.each do |trigram, score|
               inserts << sanitize_sql_array(['(?,?,?,?,?)', self.name, record.id, field.to_s, score, trigram])
             end

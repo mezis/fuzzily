@@ -10,7 +10,8 @@ Gem::Specification.new do |gem|
   gem.email         = ["julien.letessier@gmail.com"]
   gem.description   = %q{Fast fuzzy string matching for rails}
   gem.summary       = %q{A fast, trigram-based, database-backed fuzzy string search/match engine for Rails.}
-  gem.homepage      = ""
+  gem.homepage      = "http://github.com/mezis/fuzzily"
+  gem.license       = 'MIT'
 
   gem.add_runtime_dependency 'activerecord', '>= 2.3.17'
 

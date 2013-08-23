@@ -120,6 +120,8 @@ columns in any version.
 
 MIT licence. Quite permissive if you ask me.
 
+Copyright (c) 2013 HouseTrip Ltd.
+
 ## Contributing
 
 1. Fork it

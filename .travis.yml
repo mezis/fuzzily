@@ -15,6 +15,7 @@ matrix:
   exclude:
     - rvm: 2.0.0
       gemfile: gemfiles/rails23.gemfile
+      env: TRAVIS=TRUE
 before_script:
   - psql -c 'create database fuzzily_test;' -U postgres
   - mysql -e 'create database fuzzily_test;'

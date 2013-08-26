@@ -44,7 +44,7 @@ GEM
       slop (~> 3.4)
     pry-nav (0.2.3)
       pry (~> 0.9.10)
-    rake (10.0.4)
+    rake (10.1.0)
     rest-client (1.6.7)
       mime-types (>= 1.16)
     rspec (2.13.0)

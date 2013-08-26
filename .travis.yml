@@ -10,6 +10,7 @@ gemfile:
   - gemfiles/rails32.gemfile
   - gemfiles/rails32_pg.gemfile
   - gemfiles/rails32_mysql.gemfile
+before_install: bundle install
 matrix:
   exclude:
     - rvm: 2.0.0

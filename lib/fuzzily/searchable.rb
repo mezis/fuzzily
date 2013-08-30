@@ -75,7 +75,8 @@ module Fuzzily
 
           trigram_class.transaction do
             batch.each { |record| record.send(trigram_association).delete_all }
-
+            return if inserts.empty?
+            
             if supports_bulk_inserts
               trigram_class.connection.insert(insert_sql + inserts.join(", "))
             else

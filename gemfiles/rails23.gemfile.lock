@@ -1,7 +1,7 @@
 PATH
   remote: /Users/mezis/Dropbox/Development/fuzzily
   specs:
-    fuzzily (0.2.4)
+    fuzzily (0.3.0)
       activerecord (>= 2.3.17)
 
 GEM

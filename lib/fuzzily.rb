@@ -4,4 +4,4 @@ require "fuzzily/migration"
 require "fuzzily/model"
 require "active_record"
 
-ActiveRecord::Base.extend(Fuzzily::Searchable)
+ActiveRecord::Base.send :include, Fuzzily::Searchable

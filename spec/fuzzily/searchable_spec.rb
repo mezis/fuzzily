@@ -43,21 +43,26 @@ describe Fuzzily::Searchable do
     before { subject.fuzzily_searchable :name }
 
     it 'generates trigram records on creation' do
-      subject.create(:name => 'Paris')
+      subject.create!(:name => 'Paris')
       subject.last.trigrams_for_name.should_not be_empty
     end
 
     it 'generates the correct trigrams' do
-      record = subject.create(:name => 'FOO')
+      record = subject.create!(:name => 'FOO')
       Trigram.first.trigram.should    == '**f'
       Trigram.first.owner_id.should   == record.id
       Trigram.first.owner_type.should == 'Stuff'
     end
 
     it 'updates all trigram records on save' do
-      subject.create(:name => 'Paris')
+      subject.create!(:name => 'Paris')
       subject.first.update_attribute :name, 'Rome'
       Trigram.all.map(&:trigram).should =~ %w(**r *ro rom ome me*)
+    end
+
+    it 'deletes all trigrams on destroy' do
+      subject.create!(:name => 'Paris').destroy
+      Trigram.all.should be_empty
     end
   end
 
@@ -67,14 +72,14 @@ describe Fuzzily::Searchable do
     end
     
     it 're-creates trigrams' do
-      subject.create(:name => 'Paris')
+      subject.create!(:name => 'Paris')
       old_ids = Trigram.all.map(&:id)
       subject.last.update_fuzzy_name!
       (old_ids & Trigram.all.map(&:id)).should be_empty
     end
 
     it 'ignores nil values' do
-      subject.create(:name => nil)
+      subject.create!(:name => nil)
       subject.last.update_fuzzy_name!
       Trigram.all.should be_empty
     end
@@ -84,14 +89,14 @@ describe Fuzzily::Searchable do
     before { subject.fuzzily_searchable :name }
 
     it 'creates all trigrams' do
-      subject.create(:name => 'Paris')
+      subject.create!(:name => 'Paris')
       Trigram.delete_all
       subject.bulk_update_fuzzy_name
       Trigram.all.should_not be_empty
     end
 
     it 'ignores nil values' do
-      subject.create(:name => nil)
+      subject.create!(:name => nil)
       Trigram.delete_all
       subject.bulk_update_fuzzy_name
       Trigram.all.should be_empty
@@ -102,9 +107,9 @@ describe Fuzzily::Searchable do
     describe '#find_by_fuzzy_<field>' do
       it 'returns records' do
         subject.fuzzily_searchable :name
-        @paris =   subject.create(:name => 'Paris')
-        @palma =   subject.create(:name => 'Palma de Majorca')
-        @palmyre = subject.create(:name => 'La Palmyre')
+        @paris =   subject.create!(:name => 'Paris')
+        @palma =   subject.create!(:name => 'Palma de Majorca')
+        @palmyre = subject.create!(:name => 'La Palmyre')
 
         subject.find_by_fuzzy_name('Piris').should_not be_empty
         subject.find_by_fuzzy_name('Piris').should =~ [@paris, @palma]
@@ -113,10 +118,10 @@ describe Fuzzily::Searchable do
 
       it 'favours exact matches' do
         subject.fuzzily_searchable :name
-        @new_york   = subject.create(:name => 'New York')
-        @yorkshire  = subject.create(:name => 'Yorkshire')
-        @york       = subject.create(:name => 'York')
-        @yorkisthan = subject.create(:name => 'Yorkisthan')
+        @new_york   = subject.create!(:name => 'New York')
+        @yorkshire  = subject.create!(:name => 'Yorkshire')
+        @york       = subject.create!(:name => 'York')
+        @yorkisthan = subject.create!(:name => 'Yorkisthan')
 
         subject.find_by_fuzzy_name('York').should      == [@york, @new_york, @yorkshire, @yorkisthan]
         subject.find_by_fuzzy_name('Yorkshire').should == [@yorkshire, @york, @yorkisthan, @new_york]
@@ -124,10 +129,16 @@ describe Fuzzily::Searchable do
 
       it 'does not favour short words' do
         subject.fuzzily_searchable :name
-        @lo     = subject.create(:name => 'Lo')      # **l *lo lo*
-        @london = subject.create(:name => 'London')  # **l *lo lon ond ndo don on*
+        @lo     = subject.create!(:name => 'Lo')      # **l *lo lo*
+        @london = subject.create!(:name => 'London')  # **l *lo lon ond ndo don on*
                                                      # **l *lo lon
         subject.find_by_fuzzy_name('Lon').should == [@london, @lo]
+      end
+
+      it 'honours limie option' do
+        subject.fuzzily_searchable :name
+        3.times { subject.create!(:name => 'Paris') }
+        subject.find_by_fuzzy_name('Paris', :limit => 2).length.should == 2
       end
     end
   end

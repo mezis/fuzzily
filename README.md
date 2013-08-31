@@ -133,4 +133,5 @@ Copyright (c) 2013 HouseTrip Ltd.
 5. Create a new Pull Request
 
 
-Thanks to @bclennox and @fdegiuli for helping fix compatibility issues.
+Thanks to @bclennox, @fdegiuli, @nickbender, @Shanison for pointing out
+and/or helping on various issues.

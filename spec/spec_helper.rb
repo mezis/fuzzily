@@ -27,7 +27,7 @@ def get_connection_hash
       :adapter  => 'mysql2',
       :database => 'fuzzily_test',
       :host     => 'localhost',
-      :user     => ENV['FUZZILY_DB_USER']
+      :username => ENV['FUZZILY_DB_USER']
     }
   when 'sqlite3'
     {

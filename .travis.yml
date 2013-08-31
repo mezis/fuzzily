@@ -10,14 +10,16 @@ gemfile:
   - gemfiles/rails32.gemfile
   - gemfiles/rails32_pg.gemfile
   - gemfiles/rails32_mysql.gemfile
+  - gemfiles/rails40.gemfile
 before_install: bundle install
 bundler_args:
 matrix:
   exclude:
     - rvm: 2.0.0
       gemfile: gemfiles/rails23.gemfile
-      env: TRAVIS=TRUE
 before_script:
   - psql -c 'create database fuzzily_test;' -U postgres
   - mysql -e 'create database fuzzily_test;'
-env: TRAVIS=TRUE
+env:
+  global:
+    - TRAVIS=TRUE

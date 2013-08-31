@@ -5,17 +5,22 @@ module Fuzzily
   module Searchable
 
     def self.included(by)
-      by.extend ClassMethods
+      case ActiveRecord::VERSION::MAJOR
+      when 2 then by.extend Rails2ClassMethods
+      when 3 then by.extend Rails3ClassMethods
+      when 4 then by.extend Rails4ClassMethods
+      end
     end
 
+    private
 
-    def update_fuzzy!(_o)
+    def _update_fuzzy!(_o)
       self.send(_o.trigram_association).delete_all
       String.new(self.send(_o.field)).scored_trigrams.each do |trigram, score|
         self.send(_o.trigram_association).create!(:score => score, :trigram => trigram, :owner_type => self.class.name)
       end
     end
-    private :update_fuzzy!
+
 
     module ClassMethods
       # fuzzily_searchable <field> [, <field>...] [, <options>]
@@ -27,29 +32,26 @@ module Fuzzily
         end
       end
 
-
       private
 
-
-      def find_by_fuzzy(_o, pattern, options={})
+      def _find_by_fuzzy(_o, pattern, options={})
         options[:limit] ||= 10
 
         _o.trigram_class_name.constantize.
-          scoped(options).
+          limit(options[:limit]).
           for_model(self.name).
           for_field(_o.field.to_s).
           matches_for(pattern)
       end
 
-
-      def bulk_update_fuzzy(_o)
+      def _bulk_update_fuzzy(_o)
         trigram_class = _o.trigram_class_name.constantize
 
         supports_bulk_inserts  =
           connection.class.name !~ /sqlite/i ||
           connection.send(:sqlite_version) >= '3.7.11'
 
-        self.scoped(:include => _o.trigram_association).find_in_batches(:batch_size => 100) do |batch|
+        _with_included_trigrams(_o).find_in_batches(:batch_size => 100) do |batch|
           inserts = []
           batch.each do |record|
             data = Fuzzily::String.new(record.send(_o.field))
@@ -87,7 +89,6 @@ module Fuzzily
         end
       end
 
-
       def make_field_fuzzily_searchable(field, options={})
         class_variable_defined?(:"@@fuzzily_searchable_#{field}") and return
 
@@ -98,23 +99,18 @@ module Fuzzily
           :update_trigrams_method => "update_fuzzy_#{field}!".to_sym
         )
 
-        has_many _o.trigram_association,
-          :class_name => _o.trigram_class_name,
-          :as         => :owner,
-          :conditions => { :fuzzy_field => field.to_s },
-          :dependent  => :destroy,
-          :autosave   => true
+        _add_trigram_association(_o)
 
         singleton_class.send(:define_method,"find_by_fuzzy_#{field}".to_sym) do |*args|
-          find_by_fuzzy(_o, *args)
+          _find_by_fuzzy(_o, *args)
         end
 
         singleton_class.send(:define_method,"bulk_update_fuzzy_#{field}".to_sym) do
-          bulk_update_fuzzy(_o)
+          _bulk_update_fuzzy(_o)
         end
 
         define_method _o.update_trigrams_method do
-          update_fuzzy!(_o)
+          _update_fuzzy!(_o)
         end
 
         after_save do |record|
@@ -126,5 +122,46 @@ module Fuzzily
         self
       end
     end
+
+    module Rails2ClassMethods
+      include ClassMethods
+
+      private
+
+      def _add_trigram_association(_o)
+        has_many _o.trigram_association,
+          :class_name => _o.trigram_class_name,
+          :as         => :owner,
+          :conditions => { :fuzzy_field => _o.field.to_s },
+          :dependent  => :destroy,
+          :autosave   => true
+      end
+
+      def _with_included_trigrams(_o)
+        self.scoped(:include => _o.trigram_association)
+      end
+    end
+
+    Rails3ClassMethods = Rails2ClassMethods
+
+    module Rails4ClassMethods
+      include ClassMethods
+
+      private
+
+      def _add_trigram_association(_o)
+        has_many _o.trigram_association,
+          lambda { where(:fuzzy_field => _o.field.to_s) },
+          :class_name => _o.trigram_class_name,
+          :as         => :owner,
+          :dependent  => :delete_all,
+          :autosave   => true
+      end
+
+      def _with_included_trigrams(_o)
+        self.includes(_o.trigram_association)
+      end
+    end
+
   end
 end

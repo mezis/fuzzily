@@ -62,12 +62,21 @@ describe Fuzzily::Searchable do
   end
 
   describe '#update_fuzzy_<field>!' do
-    it 're-creates trigrams' do
+    before do
       subject.fuzzily_searchable :name
+    end
+    
+    it 're-creates trigrams' do
       subject.create(:name => 'Paris')
       old_ids = Trigram.all.map(&:id)
       subject.last.update_fuzzy_name!
       (old_ids & Trigram.all.map(&:id)).should be_empty
+    end
+
+    it 'ignores nil values' do
+      subject.create(:name => nil)
+      subject.last.update_fuzzy_name!
+      Trigram.all.should be_empty
     end
   end
 
@@ -79,6 +88,13 @@ describe Fuzzily::Searchable do
       Trigram.delete_all
       subject.bulk_update_fuzzy_name
       Trigram.all.should_not be_empty
+    end
+
+    it 'ignores nil values' do
+      subject.create(:name => nil)
+      Trigram.delete_all
+      subject.bulk_update_fuzzy_name
+      Trigram.all.should be_empty
     end
   end
 

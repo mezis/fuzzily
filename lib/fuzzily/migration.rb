@@ -12,11 +12,19 @@ module Fuzzily
           @trigrams_table_name ||= :trigrams
         end
 
+        def trigrams_owner_id_column_type=(custom_type)
+          @trigrams_owner_id_column_type = custom_type
+        end
+
+        def trigrams_owner_id_column_type
+          @trigrams_owner_id_column_type ||= :integer
+        end
+
         def up
           create_table trigrams_table_name do |t|
             t.string  :trigram, :limit => 3
             t.integer :score,   :limit => 2
-            t.integer :owner_id
+            t.send trigrams_owner_id_column_type, :owner_id
             t.string  :owner_type
             t.string  :fuzzy_field
           end

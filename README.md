@@ -117,6 +117,14 @@ MySQL and pgSQL.
 This is not the default in the gem as ActiveRecord does not suport `ENUM`
 columns in any version.
 
+## UUID's
+
+When using Rails 4 with UUID's, you will need to change the `owner_id` column type to `UUID`.
+
+	class AddTrigramsModel < ActiveRecord::Migration
+	  extend Fuzzily::Migration
+	  trigrams_owner_id_column_type = :uuid
+	end
 
 ## License
 

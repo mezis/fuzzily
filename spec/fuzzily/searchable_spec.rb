@@ -135,7 +135,7 @@ describe Fuzzily::Searchable do
         subject.find_by_fuzzy_name('Lon').should == [@london, @lo]
       end
 
-      it 'honours limie option' do
+      it 'honours limit option' do
         subject.fuzzily_searchable :name
         3.times { subject.create!(:name => 'Paris') }
         subject.find_by_fuzzy_name('Paris', :limit => 2).length.should == 2

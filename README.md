@@ -55,7 +55,7 @@ Create a migration for it:
       extend Fuzzily::Migration
     end
 
-Instrument your model (your searchable fields do not have to be stored, they can be dynamic methods too):
+Instrument your model:
 
     class MyStuff < ActiveRecord::Base
       # assuming my_stuffs has a 'name' attribute
@@ -125,6 +125,28 @@ When using Rails 4 with UUID's, you will need to change the `owner_id` column ty
 	  extend Fuzzily::Migration
 	  trigrams_owner_id_column_type = :uuid
 	end
+
+## Searching virtual attributes
+
+Your searchable fields do not have to be stored, they can be dynamic methods
+too. Just remember to add a virtual change method as well.
+For instance, if you model has `first_name` and `last_name` attributes, and you
+want to index a compound `name` dynamic attribute: 
+
+```ruby
+class Employee < ActiveRecord::Base
+  fuzzily_searchable :name
+  def name
+    "#{first_name} #{last_name}"
+  end
+
+  def name_changed?
+    first_name_changed? || last_name_changed?
+  end
+end
+```
+
+
 
 ## License
 

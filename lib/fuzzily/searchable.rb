@@ -37,11 +37,20 @@ module Fuzzily
       def _find_by_fuzzy(_o, pattern, options={})
         options[:limit] ||= 10
 
-        _o.trigram_class_name.constantize.
+        trigrams = _o.trigram_class_name.constantize.
           limit(options[:limit]).
           for_model(self.name).
           for_field(_o.field.to_s).
           matches_for(pattern)
+        records = _load_for_ids(trigrams.map(&:owner_id))
+        # order records as per trigram query (no portable way to do this in SQL)
+        trigrams.map { |t| records[t.owner_id] }
+      end
+
+      def _load_for_ids(ids)
+        {}.tap do |result|
+          find(ids).each { |_r| result[_r.id] = _r }
+        end
       end
 
       def _bulk_update_fuzzy(_o)

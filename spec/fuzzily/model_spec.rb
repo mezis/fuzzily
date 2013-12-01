@@ -43,21 +43,21 @@ describe Fuzzily::Model do
       end
 
       it 'finds matches' do
-        model.matches_for('Paris').should == [@paris]
+        model.matches_for('Paris').map(&:owner).should == [@paris]
       end
 
       it 'finds close matches' do
-        model.matches_for('Piriss').should == [@paris]
+        model.matches_for('Piriss').map(&:owner).should == [@paris]
       end
 
       it 'does not confuse fields' do
-        model.for_field(:name).matches_for('Paris').should == [@paris]
-        model.for_field(:data).matches_for('Paris').should be_empty
+        model.for_field(:name).matches_for('Paris').map(&:owner).should == [@paris]
+        model.for_field(:data).matches_for('Paris').map(&:owner).should be_empty
       end
 
       it 'does not confuse owner types' do
-        model.for_model(Stuff).matches_for('Paris').should == [@paris]
-        model.for_model(Object).matches_for('Paris').should be_empty
+        model.for_model(Stuff).matches_for('Paris').map(&:owner).should == [@paris]
+        model.for_model(Object).matches_for('Paris').map(&:owner).should be_empty
       end
 
       context '(with more than one entry)' do
@@ -69,7 +69,7 @@ describe Fuzzily::Model do
         end
 
         it 'returns ordered results' do
-          model.matches_for('Palmyre').should == [@palma, @paris]
+          model.matches_for('Palmyre').map(&:owner).should == [@palma, @paris]
         end
       end
     end

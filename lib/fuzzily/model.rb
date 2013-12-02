@@ -35,8 +35,7 @@ module Fuzzily
             scoped(:select => 'owner_id, owner_type, count(*) AS matches, MAX(score) AS score').
             scoped(:group => 'owner_id, owner_type').
             scoped(:order => 'matches DESC, score ASC').
-            with_trigram(trigrams).
-            map(&:owner)
+            with_trigram(trigrams)
         end
 
         def _add_fuzzy_scopes
@@ -59,8 +58,7 @@ module Fuzzily
             select('owner_id, owner_type, count(*) AS matches, MAX(score) AS score').
             group('owner_id, owner_type').
             order('matches DESC, score ASC').
-            with_trigram(trigrams).
-            map(&:owner)
+            with_trigram(trigrams)
         end
 
         def _add_fuzzy_scopes

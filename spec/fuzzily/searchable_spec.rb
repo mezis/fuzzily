@@ -140,6 +140,12 @@ describe Fuzzily::Searchable do
         3.times { subject.create!(:name => 'Paris') }
         subject.find_by_fuzzy_name('Paris', :limit => 2).length.should == 2
       end
+
+      it 'honours offset option' do
+        subject.fuzzily_searchable :name
+        3.times { subject.create!(:name => 'Paris') }
+        subject.find_by_fuzzy_name('Paris', :offset => 2).length.should == 1
+      end
     end
   end
 

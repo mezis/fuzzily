@@ -36,9 +36,11 @@ module Fuzzily
 
       def _find_by_fuzzy(_o, pattern, options={})
         options[:limit] ||= 10
+        options[:offset] ||= 0
 
         trigrams = _o.trigram_class_name.constantize.
           limit(options[:limit]).
+          offset(options[:offset]).
           for_model(self.name).
           for_field(_o.field.to_s).
           matches_for(pattern)

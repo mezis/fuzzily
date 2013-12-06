@@ -137,7 +137,12 @@ module Fuzzily
     module Rails2ClassMethods
       include ClassMethods
 
-      named_scope :offset, lambda { |*args| { :offset => args.first } } if self.respond_to? :named_scope
+      def self.extended(base)
+        base.class_eval do
+          named_scope :offset, 
+            lambda { |*args| { :offset => args.first } }
+        end
+      end
 
       private
 

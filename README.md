@@ -45,63 +45,77 @@ You'll need to setup 2 things:
 
 Create and ActiveRecord model in your app (this will be used to store a "fuzzy index" of all the models and fields you will be indexing):
 
-    class Trigram < ActiveRecord::Base
-      include Fuzzily::Model
-    end
+```ruby
+class Trigram < ActiveRecord::Base
+  include Fuzzily::Model
+end
+```
 
 Create a migration for it:
 
-    class AddTrigramsModel < ActiveRecord::Migration
-      extend Fuzzily::Migration
-    end
+```ruby
+class AddTrigramsModel < ActiveRecord::Migration
+  extend Fuzzily::Migration
+end
+```
 
 Instrument your model:
 
-    class MyStuff < ActiveRecord::Base
-      # assuming my_stuffs has a 'name' attribute
-      fuzzily_searchable :name
-    end
+```ruby
+class MyStuff < ActiveRecord::Base
+  # assuming my_stuffs has a 'name' attribute
+  fuzzily_searchable :name
+end
+```
 
 Index your model (will happen automatically for new/updated records):
 
-    MyStuff.bulk_update_fuzzy_name
+```ruby
+MyStuff.bulk_update_fuzzy_name
+```
 
 Search!
 
-    MyStuff.find_by_fuzzy_name('Some Name', :limit => 10)
-    # => records
+```ruby
+MyStuff.find_by_fuzzy_name('Some Name', :limit => 10)
+# => records
+```
 
 You can force an update on a specific record with
 
-    MyStuff.find(123).update_fuzzy_name!
+```ruby
+MyStuff.find(123).update_fuzzy_name!
+```
 
 ## Indexing more than one field
 
 Just list all the field you want to index, or call `fuzzily_searchable` more than once: 
 
-    class MyStuff < ActiveRecord::Base
-      fuzzily_searchable :name_fr, :name_en
-      fuzzily_searchable :name_de
-    end
-
+```ruby
+class MyStuff < ActiveRecord::Base
+  fuzzily_searchable :name_fr, :name_en
+  fuzzily_searchable :name_de
+end
+```
 
 ## Custom name for the index model
 
 If you want or need to name your index model differently (e.g. because you already have a class called `Trigram`):
 
-    class CustomTrigram < ActiveRecord::Base
-      include Fuzzily::Model
-    end
+```ruby
+class CustomTrigram < ActiveRecord::Base
+  include Fuzzily::Model
+end
 
-    class AddTrigramsModel < ActiveRecord::Migration
-      extend Fuzzily::Migration
-      trigrams_table_name = :custom_trigrams
-    end
+class AddTrigramsModel < ActiveRecord::Migration
+  extend Fuzzily::Migration
+  trigrams_table_name = :custom_trigrams
+end
 
-    class MyStuff < ActiveRecord::Base
-      fuzzily_searchable :name, :class_name => 'CustomTrigram'
-    end
-
+class MyStuff < ActiveRecord::Base
+  fuzzily_searchable :name, :class_name => 'CustomTrigram'
+end
+```
 
 ## Speeding things up
 
@@ -121,10 +135,12 @@ columns in any version.
 
 When using Rails 4 with UUID's, you will need to change the `owner_id` column type to `UUID`.
 
-	class AddTrigramsModel < ActiveRecord::Migration
-	  extend Fuzzily::Migration
-	  trigrams_owner_id_column_type = :uuid
-	end
+```ruby
+class AddTrigramsModel < ActiveRecord::Migration
+  extend Fuzzily::Migration
+  trigrams_owner_id_column_type = :uuid
+end
+```
 
 ## Searching virtual attributes
 

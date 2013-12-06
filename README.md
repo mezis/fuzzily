@@ -11,7 +11,7 @@
 > Here aresome photos of **Marrakesh**, Morroco.
 > Did you mean **Martanesh**, Albania, **Marakkanam**, India, or **Marasheshty**, Romania?
 
-Blurrily finds misspelled, prefix, or partial needles in a haystack of
+Fuzzily finds misspelled, prefix, or partial needles in a haystack of
 strings. It's a fast, [trigram](http://en.wikipedia.org/wiki/N-gram)-based, database-backed [fuzzy](http://en.wikipedia.org/wiki/Approximate_string_matching) string search/match engine for Rails.
 Loosely inspired from an [old blog post](http://unirec.blogspot.co.uk/2007/12/live-fuzzy-search-using-n-grams-in.html).
 

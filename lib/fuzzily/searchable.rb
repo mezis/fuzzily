@@ -140,7 +140,7 @@ module Fuzzily
       def self.extended(base)
         base.class_eval do
           named_scope :offset, 
-            lambda { |*args| { :offset => args.first } }
+            lambda { |*args| { :offset => args.first } } if respond_to? :named_scope
         end
       end
 

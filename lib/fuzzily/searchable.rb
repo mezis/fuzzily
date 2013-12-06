@@ -137,6 +137,8 @@ module Fuzzily
     module Rails2ClassMethods
       include ClassMethods
 
+      named_scope :offset, lambda { |*args| { :offset => args.first } } if self.respond_to? :named_scope
+
       private
 
       def _add_trigram_association(_o)

@@ -36,9 +36,11 @@ module Fuzzily
 
       def _find_by_fuzzy(_o, pattern, options={})
         options[:limit] ||= 10
+        options[:offset] ||= 0
 
         trigrams = _o.trigram_class_name.constantize.
           limit(options[:limit]).
+          offset(options[:offset]).
           for_model(self.name).
           for_field(_o.field.to_s).
           matches_for(pattern)
@@ -135,6 +137,12 @@ module Fuzzily
     module Rails2ClassMethods
       include ClassMethods
 
+      def self.extended(base)
+        base.class_eval do
+          named_scope :offset, lambda { |*args| { :offset => args.first } }
+        end
+      end
+
       private
 
       def _add_trigram_association(_o)
@@ -151,7 +159,26 @@ module Fuzzily
       end
     end
 
-    Rails3ClassMethods = Rails2ClassMethods
+    module Rails3ClassMethods
+      include ClassMethods
+
+      private
+
+      def _add_trigram_association(_o)
+        has_many _o.trigram_association,
+          :class_name => _o.trigram_class_name,
+          :as         => :owner,
+          :conditions => { :fuzzy_field => _o.field.to_s },
+          :dependent  => :destroy,
+          :autosave   => true
+      end
+
+      def _with_included_trigrams(_o)
+        self.scoped(:include => _o.trigram_association)
+      end
+    end
+
+
 
     module Rails4ClassMethods
       include ClassMethods

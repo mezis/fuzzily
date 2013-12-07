@@ -163,5 +163,5 @@ Copyright (c) 2013 HouseTrip Ltd.
 5. Create a new Pull Request
 
 
-Thanks to @bclennox, @fdegiuli, @nickbender, @Shanison for pointing out
+Thanks to @bclennox, @fdegiuli, @nickbender, @Shanison, @rickbutton for pointing out
 and/or helping on various issues.

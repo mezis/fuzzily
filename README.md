@@ -109,7 +109,7 @@ end
 
 class AddTrigramsModel < ActiveRecord::Migration
   extend Fuzzily::Migration
-  trigrams_table_name = :custom_trigrams
+  self.trigrams_table_name = :custom_trigrams
 end
 
 class MyStuff < ActiveRecord::Base

@@ -142,6 +142,10 @@ class AddTrigramsModel < ActiveRecord::Migration
 end
 ```
 
+## Model primary key (id) is VARCHAR
+
+If you set your Model primary key (id) AS `VARCHAR` instead of `INT`, you will need to change the `owner_id` column type from `INT` to `VARCHAR` in the trigrams table.
+
 ## Searching virtual attributes
 
 Your searchable fields do not have to be stored, they can be dynamic methods

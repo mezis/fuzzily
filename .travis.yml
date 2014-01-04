@@ -11,6 +11,8 @@ gemfile:
   - gemfiles/rails32_pg.gemfile
   - gemfiles/rails32_mysql.gemfile
   - gemfiles/rails40.gemfile
+before_install:
+  - if ruby --version | fgrep -q 'ruby 1.8.7' ; then gem update --system 1.8.25 ; fi
 install:
   - ./rebund/run download
   - bundle install --path ../vendor/bundle

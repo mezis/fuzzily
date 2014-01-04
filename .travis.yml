@@ -11,8 +11,11 @@ gemfile:
   - gemfiles/rails32_pg.gemfile
   - gemfiles/rails32_mysql.gemfile
   - gemfiles/rails40.gemfile
-before_install: bundle install
-bundler_args:
+install:
+  - ./rebund/run download
+  - bundle install --path ../vendor/bundle
+after_script:
+  - ./rebund/run upload
 matrix:
   exclude:
     - rvm: 2.0.0
@@ -27,3 +30,4 @@ before_script:
 env:
   global:
     - TRAVIS=TRUE
+    - secure: bXHSygHAYQtuVj+rZSaXOQJFWVQEwnOm3HOivKfh+0CADtHJ3TxWSPHpwWPDx/+GDqad4eU/9qfhb5GBr1lJMRJmSi5iJ53KOZxilHqL0fo070mSsLEvOSnT6fKwIe30+3LTYVR6oKEwdyt9EI/yP5aGO4klncZkvI2zqAoy6YI=

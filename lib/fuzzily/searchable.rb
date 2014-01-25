@@ -17,7 +17,13 @@ module Fuzzily
     def _update_fuzzy!(_o)
       self.send(_o.trigram_association).delete_all
       String.new(self.send(_o.field)).scored_trigrams.each do |trigram, score|
-        self.send(_o.trigram_association).create!(:score => score, :trigram => trigram, :owner_type => self.class.name)
+        # The create! with parameters causes a Rails exception for mass assignment
+        # self.send(_o.trigram_association).create!(:score => score, :trigram => trigram, :owner_type => self.class.name)
+        cfo=self.send(_o.trigram_association).new
+        cfo.score = score
+        cfo.trigram = trigram
+        cfo.owner_type = self.class.name
+        cfo.save!
       end
     end
 

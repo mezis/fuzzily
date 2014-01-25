@@ -22,7 +22,7 @@ module Fuzzily
         cfo=self.send(_o.trigram_association).new
         cfo.score = score
         cfo.trigram = trigram
-        cfo.owner_type = owner_type
+        cfo.owner_type = self.class.name
         cfo.save!
       end
     end

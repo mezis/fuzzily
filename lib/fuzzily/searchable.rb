@@ -17,7 +17,13 @@ module Fuzzily
     def _update_fuzzy!(_o)
       self.send(_o.trigram_association).delete_all
       String.new(self.send(_o.field)).scored_trigrams.each do |trigram, score|
-        self.send(_o.trigram_association).create!(:score => score, :trigram => trigram, :owner_type => self.class.name)
+        # The create! with parameters causes a Rails exception for mass assignment
+        # self.send(_o.trigram_association).create!(:score => score, :trigram => trigram, :owner_type => self.class.name)
+        cfo=self.send(_o.trigram_association).new
+        cfo.score = score
+        cfo.trigram = trigram
+        cfo.owner_type = self.class.name
+        cfo.save!
       end
     end
 
@@ -39,19 +45,39 @@ module Fuzzily
         options[:offset] ||= 0
 
         trigrams = _o.trigram_class_name.constantize.
-          limit(options[:limit]).
+          # Christer 2a) Don't apply limit yet
+          # limit(options[:limit]).
           offset(options[:offset]).
           for_model(self.name).
           for_field(_o.field.to_s).
           matches_for(pattern)
-        records = _load_for_ids(trigrams.map(&:owner_id))
+        # Christer 2b) Send limit param along
+        # records = _load_for_ids(trigrams.map(&:owner_id))
+        records = _load_for_ids1(trigrams.map(&:owner_id), options[:limit])
         # order records as per trigram query (no portable way to do this in SQL)
-        trigrams.map { |t| records[t.owner_id] }
+        trigrams.map { |t| records[t.owner_id] }.compact
       end
 
       def _load_for_ids(ids)
         {}.tap do |result|
-          find(ids).each { |_r| result[_r.id] = _r }
+          # Christer 1): breaks if object with id is not found (eg. we're applying fuzzy search to scope)
+          # find(ids).each { |_r| result[_r.id] = _r }
+          # Replace with
+          ids.each{|id|
+            result[id] = find_by_id(id) if find_by_id(id).present?
+          }
+        end
+      end
+
+      # Christer 2c) Apply params[:limit]  while creating the hash
+      def _load_for_ids1(ids, limit)
+        {}.tap do |result|
+          ids.each{|id|
+            if find_by_id(id).present?
+              result[id] = find_by_id(id)
+              break if ((limit-=1) == 0)
+            end
+          }
         end
       end
 

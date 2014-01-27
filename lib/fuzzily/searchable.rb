@@ -45,13 +45,13 @@ module Fuzzily
         options[:offset] ||= 0
 
         trigrams = _o.trigram_class_name.constantize.
-          # Christer 2) Don't apply limit yet
+          # Christer 2a) Don't apply limit yet
           # limit(options[:limit]).
           offset(options[:offset]).
           for_model(self.name).
           for_field(_o.field.to_s).
           matches_for(pattern)
-        # Christer 3) Send limit param along
+        # Christer 2b) Send limit param along
         # records = _load_for_ids(trigrams.map(&:owner_id))
         records = _load_for_ids1(trigrams.map(&:owner_id), options[:limit])
         # order records as per trigram query (no portable way to do this in SQL)
@@ -69,6 +69,7 @@ module Fuzzily
         end
       end
 
+      # Christer 2c) Apply params[:limit]  while creating the hash
       def _load_for_ids1(ids, limit)
         {}.tap do |result|
           ids.each{|id|

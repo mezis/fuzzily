@@ -2,8 +2,11 @@ require 'spec_helper'
 
 describe Fuzzily::Searchable do
   # Prepare ourselves a Trigram repository
-  class Trigram < ActiveRecord::Base
-    include Fuzzily::Model
+  before do
+    silence_warnings do
+      Trigram = Class.new(ActiveRecord::Base)
+    end
+    Trigram.class_eval { include Fuzzily::Model }
   end
 
   before(:each) { prepare_trigrams_table }
@@ -82,6 +85,16 @@ describe Fuzzily::Searchable do
       subject.create!(:name => nil)
       subject.last.update_fuzzy_name!
       Trigram.all.should be_empty
+    end
+
+    if ActiveRecord::VERSION::MAJOR <= 3
+      let(:fields) {[ :score, :fuzzy_field, :trigram ]}
+      before { Trigram.attr_protected  fields }
+
+      it 'tolerates mass assignment security' do
+        subject.create!(:name => 'Paris')
+        subject.last.update_fuzzy_name!
+      end
     end
   end
 

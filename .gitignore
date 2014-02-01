@@ -1,6 +1,5 @@
 *.gem
 *.rbc
-.bundle
 .config
 .yardoc
 InstalledFiles
@@ -21,3 +20,7 @@ tmp
 # Data
 *.gz
 *.bz2
+
+# Bundler
+.bundle
+vendor/bundle

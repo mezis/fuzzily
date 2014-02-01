@@ -1,8 +1,8 @@
 rvm:
   - "1.8.7"
-  - "1.9.2"
   - "1.9.3"
   - "2.0.0"
+  - "2.1.0"
 gemfile:
   - gemfiles/rails23.gemfile
   - gemfiles/rails30.gemfile
@@ -20,11 +20,11 @@ after_script:
   - ./rebund/run upload
 matrix:
   exclude:
+    - rvm: 2.1.0
+      gemfile: gemfiles/rails23.gemfile
     - rvm: 2.0.0
       gemfile: gemfiles/rails23.gemfile
     - rvm: 1.8.7
-      gemfile: gemfiles/rails40.gemfile
-    - rvm: 1.9.2
       gemfile: gemfiles/rails40.gemfile
 before_script:
   - psql -c 'create database fuzzily_test;' -U postgres

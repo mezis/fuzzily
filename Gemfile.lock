@@ -1,11 +1,11 @@
 PATH
   remote: .
   specs:
-    fuzzily (0.3.1)
+    fuzzily (0.3.2)
       activerecord (>= 2.3.17)
 
 GEM
-  remote: https://rubygems.org/
+  remote: http://yarp.dev/
   specs:
     activemodel (3.2.14)
       activesupport (= 3.2.14)

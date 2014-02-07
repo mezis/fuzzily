@@ -170,6 +170,14 @@ describe Fuzzily::Searchable do
           subject.where(:flag => true).find_by_fuzzy_name('York')
         }.to_not raise_error
       end
+
+      it 'doesnt return nils' do
+        subject.fuzzily_searchable :name
+        @new_yokr = subject.create!(:name => 'New York', :flag => true)
+
+        results = subject.where(:flag => false).find_by_fuzzy_name('York')
+        results.any?{ |r| r == nil }.should be_false
+      end
     end
   end
 

@@ -170,8 +170,11 @@ end
 
 ## Extensions provided compared to the original gem
 
+This version of fuzzily contains experimental extensions to the [original gem](https://github.com/mezis/fuzzily). Unless you seriously want some of the extensions - further described below - please use the original gem.
+
 - Branch master: Avoid problems related to mass-assignment (this feature is now merged into the original gem)
-- Branch apply_on_scope: makes it possible to apply find_by_fuzzy on a relation/scope, like for example: Person.where('country = ?', "France").find_by_fuzzy_name(the_name, :limit => 20)
+- Branch apply_on_scope: makes it possible to apply find_by_fuzzy on a relation/scope, like for example:
+    Person.where('country = ?', "France").find_by_fuzzy_name(the_name, :limit => 20)
 
 
 

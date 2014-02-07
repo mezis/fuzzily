@@ -56,7 +56,7 @@ module Fuzzily
 
       def _load_for_ids(ids)
         {}.tap do |result|
-          find(ids).each { |_r| result[_r.id] = _r }
+          where(:id => ids).each { |_r| result[_r.id] = _r }
         end
       end
 

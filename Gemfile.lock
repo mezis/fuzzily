@@ -5,7 +5,7 @@ PATH
       activerecord (>= 2.3.17)
 
 GEM
-  remote: http://yarp.dev/
+  remote: https://rubygems.org/
   specs:
     activemodel (3.2.14)
       activesupport (= 3.2.14)

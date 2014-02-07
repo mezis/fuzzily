@@ -44,6 +44,7 @@ class StuffMigration < ActiveRecord::Migration
     create_table :stuffs do |t|
       t.string :name
       t.string :data
+      t.boolean :flag
       t.timestamps
     end
   end

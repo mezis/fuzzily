@@ -112,7 +112,8 @@ module Fuzzily
           :field                  => field,
           :trigram_class_name     => options.fetch(:class_name, 'Trigram'),
           :trigram_association    => "trigrams_for_#{field}".to_sym,
-          :update_trigrams_method => "update_fuzzy_#{field}!".to_sym
+          :update_trigrams_method => "update_fuzzy_#{field}!".to_sym,
+          :async                  => options.fetch(:async, false)
         )
 
         _add_trigram_association(_o)
@@ -126,11 +127,16 @@ module Fuzzily
         end
 
         define_method _o.update_trigrams_method do
-          _update_fuzzy!(_o)
+          if _o.async && self.respond_to?(:delay)
+            self.delay._update_fuzzy!(_o)
+          else
+            _update_fuzzy!(_o)
+          end
         end
 
         after_save do |record|
           next unless record.send("#{field}_changed?".to_sym)
+          
           record.send(_o.update_trigrams_method)
         end
 

@@ -166,7 +166,16 @@ class Employee < ActiveRecord::Base
 end
 ```
 
+## Update Trigram index using `sidekiq-delay`
 
+For larger text, it takes time to build the index. Thus it can be moved into delay task using `sidekiq` + `sidekiq-delay` or `delayed_job` gem, both of them provide the method `delay` to move the execution to background thread by adding option `async`:
+
+```ruby
+class Employee < ActiveRecord::Base
+  fuzzily_searchable :name, async: true
+
+end
+```
 
 ## License
 

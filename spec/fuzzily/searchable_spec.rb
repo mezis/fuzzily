@@ -154,6 +154,18 @@ describe Fuzzily::Searchable do
         subject.find_by_fuzzy_name('Paris', :limit => 2).length.should == 2
       end
 
+      it 'limits results to 10 if limit option is not given' do
+        subject.fuzzily_searchable :name
+        30.times { subject.create!(:name => 'Paris') }
+        subject.find_by_fuzzy_name('Paris').length.should == 10
+      end
+
+      it 'does not limit results it limit option is present and is nil' do
+        subject.fuzzily_searchable :name
+        30.times { subject.create!(:name => 'Paris') }
+        subject.find_by_fuzzy_name('Paris', :limit => nil).length.should == 30
+      end
+
       it 'honours offset option' do
         subject.fuzzily_searchable :name
         3.times { subject.create!(:name => 'Paris') }

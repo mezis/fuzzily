@@ -40,7 +40,7 @@ module Fuzzily
       private
 
       def _find_by_fuzzy(_o, pattern, options={})
-        options[:limit] ||= 10
+        options[:limit] ||= 10 unless options.has_key? :limit
         options[:offset] ||= 0
 
         trigrams = _o.trigram_class_name.constantize.

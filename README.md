@@ -68,6 +68,8 @@ class MyStuff < ActiveRecord::Base
 end
 ```
 
+*Note: The `name` part in the following method calls refers to the `:name` field. Replace it to match your searchable attribute.*
+
 Index your model (will happen automatically for new/updated records):
 
 ```ruby

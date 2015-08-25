@@ -56,7 +56,12 @@ module Fuzzily
 
       def _load_for_ids(ids)
         {}.tap do |result|
-          where(:id => ids).each { |_r| result[_r.id] = _r }
+          results = if respond_to? :where
+            where(:id => ids)
+          else
+            find(:all, ids)
+          end
+          results.each { |_r| result[_r.id] = _r }
         end
       end
 

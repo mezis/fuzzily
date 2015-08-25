@@ -51,12 +51,12 @@ module Fuzzily
           matches_for(pattern)
         records = _load_for_ids(trigrams.map(&:owner_id))
         # order records as per trigram query (no portable way to do this in SQL)
-        trigrams.map { |t| records[t.owner_id] }
+        trigrams.map { |t| records[t.owner_id] }.compact
       end
 
       def _load_for_ids(ids)
         {}.tap do |result|
-          find(ids).each { |_r| result[_r.id] = _r }
+          where(:id => ids).each { |_r| result[_r.id] = _r }
         end
       end
 
@@ -136,7 +136,7 @@ module Fuzzily
 
         after_save do |record|
           next unless record.send("#{field}_changed?".to_sym)
-          
+
           record.send(_o.update_trigrams_method)
         end
 

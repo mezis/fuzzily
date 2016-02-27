@@ -43,7 +43,7 @@ You'll need to setup 2 things:
 - a trigram model (your search index) and its migration
 - the model you want to search for
 
-Create and ActiveRecord model in your app (this will be used to store a "fuzzy index" of all the models and fields you will be indexing):
+Create an ActiveRecord model in your app (this will be used to store a "fuzzy index" of all the models and fields you will be indexing):
 
 ```ruby
 class Trigram < ActiveRecord::Base

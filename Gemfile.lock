@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     fuzzily (0.3.4)
-      activerecord (~> 5.0.0)
+      activerecord
 
 GEM
   remote: https://rubygems.org/
@@ -78,7 +78,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord (~> 5.0.0)
+  activerecord
   appraisal
   coveralls
   fuzzily!

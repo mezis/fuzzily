@@ -13,7 +13,7 @@ Gem::Specification.new do |gem|
   gem.homepage      = 'http://github.com/martijncasteel/fuzzily'
   gem.license       = 'MIT'
 
-  gem.add_runtime_dependency 'activerecord', '~> 5.0.0'
+  gem.add_runtime_dependency 'activerecord'
 
   gem.add_development_dependency 'rspec'
   gem.add_development_dependency 'rake'

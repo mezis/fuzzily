@@ -20,6 +20,15 @@ describe Fuzzily::Searchable do
     Stuff
   end
 
+  object do
+    silence_warnings do
+      Person = Class.new(ActiveRecord::Base)
+    end
+    def Person.first_name ; 'S' ; end
+    def Person.last_name ; 'tuff' ; end
+    Person
+  end
+
   describe '.fuzzily_searchable' do
     it 'is available to all of ActiveRecord' do
       subject.should respond_to(:fuzzily_searchable)
@@ -195,18 +204,29 @@ describe Fuzzily::Searchable do
     describe '#find_by_fuzzy' do
       it 'returns records' do
         subject.fuzzily_searchable :name
-        subject.create!(:name => 'New York', :flag => true)
-        subject.create!(:name => 'Yorkshire', :flag => false)
+        @new_york = subject.create!(:name => 'New York')
+        @yorkshire = subject.create!(:name => 'Yorkshire')
 
+        object.fuzzily_searchable :first_name, :last_name
+        @york = object.create!(:first_name => 'Tom', :last_name => 'York')
+        @dutch = object.create!(:first_name => 'John', :last_name => 'Dutch')
+
+        puts Trigram.find_by_fuzzy('York')
         results = Trigram.find_by_fuzzy('York')
+        results.should == [@new_york, @yorkshire, @york]
       end
 
       it 'use default filters' do
-        subject.fuzzily_searchable :name
-        subject.create!(:name => 'New York', :flag => true)
-        subject.create!(:name => 'Yorkshire', :flag => false)
+        subject.fuzzily_searchable :name, :default_filter => { where( :flag => true) }
+        @new_york = subject.create!(:name => 'New York', :flag => true)
+        @yorkshire = subject.create!(:name => 'Yorkshire', :flag => false)
+
+        object.fuzzily_searchable :first_name, :last_name
+        @york = object.create!(:first_name => 'Tom', :last_name => 'York')
+        @dutch = object.create!(:first_name => 'John', :last_name => 'Dutch')
 
         results = Trigram.find_by_fuzzy('York')
+        results.should == [@new_york, @york]
       end
 
     end

@@ -1,11 +1,12 @@
 rvm:
-  - "2.3.0"
-  - "2.4.0"
-  - "2.4.1"
+  - '2.3.3'
+  - '2.4.0'
+  - '2.4.1'
 gemfile:
-  - gemfiles/rails30.gemfile
-  - gemfiles/rails40.gemfile
-  - gemfiles/rails50.gemfile
+  - gemfiles/rails_5.0._.gemfile
+  - gemfiles/rails_5.1._.gemfile
+install:
+  - bundle install
 before_script:
   - psql -c 'create database fuzzily_test;' -U postgres
   - mysql -e 'create database fuzzily_test;'

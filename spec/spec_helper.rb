@@ -37,6 +37,20 @@ def get_connection_hash
   end
 end
 
+# NOTE not sure if threadsafe, removed from RAILS 5 kernel
+def silence_stream(*streams)
+  on_hold = streams.collect { |stream| stream.dup }
+  streams.each do |stream|
+    stream.reopen(RUBY_PLATFORM =~ /mswin/ ? 'NUL:' : '/dev/null')
+    stream.sync = true
+  end
+  yield
+ensure
+  streams.each_with_index do |stream, i|
+    stream.reopen(on_hold[i])
+  end
+end
+
 # A test model we'll need as a source of trigrams
 class Stuff < ActiveRecord::Base ; end
 class StuffMigration < ActiveRecord::Migration
@@ -64,15 +78,15 @@ RSpec.configure do |config|
     end
 
     def prepare_trigrams_table
-      silence_stream(STDOUT) do
-        Class.new(ActiveRecord::Migration).extend(Fuzzily::Migration).up
-      end
+      # silence_stream(STDOUT) do
+      Class.new(ActiveRecord::Migration).extend(Fuzzily::Migration).up
+      # end
     end
 
     def prepare_owners_table
-      silence_stream(STDOUT) do
-        StuffMigration.up
-      end
+      # silence_stream(STDOUT) do
+      StuffMigration.up
+      # end
     end
 
   end

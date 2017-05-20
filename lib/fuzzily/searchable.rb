@@ -4,6 +4,10 @@ require 'ostruct'
 module Fuzzily
   module Searchable
 
+    def self.included(by)
+      by.extend ClassMethods
+    end
+
     private
 
     def _update_fuzzy!(_o)
@@ -31,24 +35,21 @@ module Fuzzily
       private
 
       def _find_by_fuzzy(_o, pattern, options={})
-        options[:limit] ||= 10
-        options[:offset] ||= 0
-
         trigrams = _o.trigram_class_name.constantize.
-          offset(options[:offset]).
+          offset(options.fetch(:offset, 0)).
           for_model(self.name).
           for_field(_o.field.to_s).
           matches_for(pattern)
 
-        records = _load_for_ids(trigrams.map(&:owner_id), options[:limit], options[:offset])
+        records = _load_for_ids(trigrams.map(&:owner_id), options.fetch(:limit, 10))
 
         # order records as per trigram query (no portable way to do this in SQL)
         trigrams.map { |t| records[t.owner_id] }.select { |r| r != nil }
       end
 
-      def _load_for_ids(ids, l, o)
+      def _load_for_ids(ids, l)
         {}.tap do |result|
-          where(:id => ids).offset(o).limit(l).each { |_r| result[_r.id] = _r }
+          where(:id => ids).limit(l).each { |_r| result[_r.id] = _r }
         end
       end
 

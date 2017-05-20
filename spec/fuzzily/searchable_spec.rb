@@ -174,8 +174,8 @@ describe Fuzzily::Searchable do
 
       it 'doesnt die on scopes' do
         subject.fuzzily_searchable :name
-        @new_york = subject.create!(:name => 'New York', :flag => true)
-        @yorkshire = subject.create!(:name => 'Yorkshire', :flag => false)
+        subject.create!(:name => 'New York', :flag => true)
+        subject.create!(:name => 'Yorkshire', :flag => false)
 
         expect {
          subject.where(:flag => true).find_by_fuzzy_name('York')
@@ -184,10 +184,11 @@ describe Fuzzily::Searchable do
 
       it 'doesnt return nils' do
         subject.fuzzily_searchable :name
-        @new_yokr = subject.create!(:name => 'New York', :flag => true)
+        subject.create!(:name => 'New York', :flag => true)
+        subject.create!(:name => 'Yorkshire', :flag => false)
 
         results = subject.where(:flag => false).find_by_fuzzy_name('York')
-        results.any?{ |r| r == nil }.should be_false
+        results.any?{ |r| r == nil }.should == false
       end
     end
   end

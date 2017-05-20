@@ -44,6 +44,7 @@ class StuffMigration < ActiveRecord::Migration
     create_table :stuffs do |t|
       t.string :name
       t.string :data
+      t.string :flag
       t.timestamps
     end
   end

@@ -17,4 +17,3 @@ before_script:
 env:
   global:
     - TRAVIS=TRUE
-    - secure: bXHSygHAYQtuVj+rZSaXOQJFWVQEwnOm3HOivKfh+0CADtHJ3TxWSPHpwWPDx/+GDqad4eU/9qfhb5GBr1lJMRJmSi5iJ53KOZxilHqL0fo070mSsLEvOSnT6fKwIe30+3LTYVR6oKEwdyt9EI/yP5aGO4klncZkvI2zqAoy6YI=

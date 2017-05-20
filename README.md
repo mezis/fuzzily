@@ -1,9 +1,7 @@
 # Fuzzily - fuzzy string matching for ActiveRecord
 
-[![Build Status](https://travis-ci.org/mezis/fuzzily.png?branch=master)](https://travis-ci.org/mezis/fuzzily)
-[![Dependency Status](https://gemnasium.com/mezis/fuzzily.png)](https://gemnasium.com/martijncasteel/fuzzily)
-[![Code Climate](https://codeclimate.com/github/mezis/fuzzily.png)](https://codeclimate.com/github/martijncasteel/fuzzily)
-[![Coverage Status](https://coveralls.io/repos/mezis/fuzzily/badge.png?branch=coveralls)](https://coveralls.io/r/martijncasteel/fuzzily?branch=coveralls)
+[![Build Status](https://travis-ci.org/martijncasteel/fuzzily.svg?branch=master)](https://travis-ci.org/martijncasteel/fuzzily)
+[![Code Climate](https://codeclimate.com/github/martijncasteel/fuzzily.png)](https://codeclimate.com/github/martijncasteel/fuzzily)
 
 > Show me photos of **Marakech** !
 >

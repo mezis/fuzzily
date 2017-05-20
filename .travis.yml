@@ -6,11 +6,6 @@ gemfile:
   - gemfiles/rails30.gemfile
   - gemfiles/rails40.gemfile
   - gemfiles/rails50.gemfile
-install:
-  - ./rebund/run download
-  - bundle install --path ../vendor/bundle
-after_script:
-  - ./rebund/run upload
 before_script:
   - psql -c 'create database fuzzily_test;' -U postgres
   - mysql -e 'create database fuzzily_test;'

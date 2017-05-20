@@ -191,6 +191,24 @@ describe Fuzzily::Searchable do
         results.any?{ |r| r == nil }.should == false
       end
     end
-  end
 
+    describe '#find_by_fuzzy' do
+      it 'returns records' do
+        subject.fuzzily_searchable :name
+        subject.create!(:name => 'New York', :flag => true)
+        subject.create!(:name => 'Yorkshire', :flag => false)
+
+        results = Trigram.find_by_fuzzy('York')
+      end
+
+      it 'use default filters' do
+        subject.fuzzily_searchable :name
+        subject.create!(:name => 'New York', :flag => true)
+        subject.create!(:name => 'Yorkshire', :flag => false)
+
+        results = Trigram.find_by_fuzzy('York')
+      end
+
+    end
+  end
 end

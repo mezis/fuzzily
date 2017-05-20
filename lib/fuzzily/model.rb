@@ -27,6 +27,10 @@ module Fuzzily
         _matches_for_trigrams Fuzzily::String.new(text).trigrams
       end
 
+      def find_by_fuzzy(query)
+        self._matches_for_trigrams(query)
+      end
+
       private
       def _matches_for_trigrams(trigrams)
         self.

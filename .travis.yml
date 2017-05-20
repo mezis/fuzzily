@@ -1,11 +1,8 @@
 rvm:
-  - '2.2.7'
   - '2.3.3'
   - '2.4.0'
   - '2.4.1'
 gemfile:
-  - gemfiles/rails_4.0._.gemfile
-  - gemfiles/rails_4.2._.gemfile
   - gemfiles/rails_5.0._.gemfile
   - gemfiles/rails_5.1._.gemfile
 install:

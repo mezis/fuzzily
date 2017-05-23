@@ -151,17 +151,29 @@ end
 ## License
 
 MIT licence. Quite permissive if you ask me.
-
 Copyright (c) 2013 HouseTrip Ltd.
 
-## Contributing
+## Contributing flow
+```bash
+# Create and checkout a new branch for the contribution
+$ git checkout -b doc/contributing-guidelines
+# Make your changes
+$ vim README.md
+# Commit changes
+$ git add . && git commit -m "Draft contributing guidelines"
+# Push the branch to GitHub
+$ git push origin doc/contributing-guidelines
+```
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+Now open a pull request and wait for feedback. If you need to make any more changes,
+simply create new commits and push these to GitHub.
 
+## Branch naming
+Try to be descriptive. Use the following prefixes for the names depending on the type
+of work:
 
-Thanks to @bclennox, @fdegiuli, @nickbender, @Shanison, @rickbutton for pointing out
-and/or helping on various issues.
+ - `feature/` for new features.
+ - `bug/` for bugfixes.
+ - `doc/` for documentation.
+ - `test/` for testing.
+ - `debt/` for refactoring and enhancements.

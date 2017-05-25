@@ -26,6 +26,8 @@ module Fuzzily
       # fuzzily_searchable <field> [, <field>...] [, <options>]
       def fuzzily_searchable(*fields)
         options = fields.last.kind_of?(Hash) ? fields.pop : {}
+        options.fetch(:class_name, 'Trigram').constantize.
+        class_variable_set(:"@@fuzzily_class_#{self.name}", options.fetch(:default_filter, NIL))
 
         fields.each do |field|
           make_field_fuzzily_searchable(field, options)
@@ -36,20 +38,22 @@ module Fuzzily
 
       def _find_by_fuzzy(_o, pattern, options={})
         trigrams = _o.trigram_class_name.constantize.
+          limit(options.fetch(:limit, 10)).
           offset(options.fetch(:offset, 0)).
           for_model(self.name).
           for_field(_o.field.to_s).
+          within(true ? self.pluck(:id) : NIL). # TODO on searching without an where this is not desireable
           matches_for(pattern)
 
-        records = _load_for_ids(trigrams.map(&:owner_id), options.fetch(:limit, 10))
+        records = _load_for_ids trigrams.map(&:owner_id)
 
         # order records as per trigram query (no portable way to do this in SQL)
-        trigrams.map { |t| records[t.owner_id] }.select { |r| r != nil }
+        trigrams.map { |t| records[t.owner_id] }.compact
       end
 
-      def _load_for_ids(ids, l)
+      def _load_for_ids(ids)
         {}.tap do |result|
-          where(:id => ids).limit(l).each { |_r| result[_r.id] = _r }
+          find(ids).each { |_r| result[_r.id] = _r }
         end
       end
 
@@ -111,11 +115,11 @@ module Fuzzily
 
         _add_trigram_association(_o)
 
-        singleton_class.send(:define_method,"find_by_fuzzy_#{field}".to_sym) do |*args|
+        singleton_class.send(:define_method, "find_by_fuzzy_#{field}".to_sym) do |*args|
           _find_by_fuzzy(_o, *args)
         end
 
-        singleton_class.send(:define_method,"bulk_update_fuzzy_#{field}".to_sym) do
+        singleton_class.send(:define_method, "bulk_update_fuzzy_#{field}".to_sym) do
           _bulk_update_fuzzy(_o)
         end
 

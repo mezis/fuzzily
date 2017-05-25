@@ -61,12 +61,29 @@ class StuffMigration < ActiveRecord::Migration[4.2]
   end
 end
 
+class Person < ActiveRecord::Base ; end
+class PersonMigration < ActiveRecord::Migration[4.2]
+  def self.up
+    create_table :people do |t|
+      t.string :first_name
+      t.string :last_name
+      t.integer :age
+      t.timestamps
+    end
+  end
+
+  def self.down
+    drop_table :people
+  end
+end
+
 RSpec.configure do |config|
   config.before(:each) do
     # Connect to & cleanup test database
     ActiveRecord::Base.establish_connection(get_connection_hash)
+    ActiveRecord::Base.logger = Logger.new(STDOUT) if defined?(ActiveRecord::Base)
 
-    %w(trigrams stuffs foobars).each do |table_name|
+    %w(trigrams stuffs foobars people).each do |table_name|
       ActiveRecord::Base.connection.execute "DROP TABLE IF EXISTS #{table_name};"
     end
 
@@ -79,6 +96,7 @@ RSpec.configure do |config|
     def prepare_owners_table
       silence_stream(STDOUT) do
         StuffMigration.up
+        PersonMigration.up
       end
     end
 

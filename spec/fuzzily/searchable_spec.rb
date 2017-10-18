@@ -12,7 +12,7 @@ describe Fuzzily::Searchable do
   before(:each) { prepare_trigrams_table }
   before(:each) { prepare_owners_table   }
 
-  subject do 
+  subject do
     silence_warnings do
       Stuff = Class.new(ActiveRecord::Base)
     end
@@ -73,7 +73,7 @@ describe Fuzzily::Searchable do
     before do
       subject.fuzzily_searchable :name
     end
-    
+
     it 're-creates trigrams' do
       subject.create!(:name => 'Paris')
       old_ids = Trigram.all.map(&:id)
@@ -170,6 +170,20 @@ describe Fuzzily::Searchable do
         subject.fuzzily_searchable :name
         3.times { subject.create!(:name => 'Paris') }
         subject.find_by_fuzzy_name('Paris', :offset => 2).length.should == 1
+      end
+
+      it 'does not raise on missing objects' do
+        subject.fuzzily_searchable :name
+        belgium = subject.create(:name => 'Belgium')
+        belgium.delete
+        subject.find_by_fuzzy_name('Belgium')
+      end
+
+      it 'finds others alongside missing' do
+        subject.fuzzily_searchable :name
+        belgium1, belgium2 = 2.times.map { subject.create(:name => 'Belgium') }
+        belgium1.delete
+        subject.find_by_fuzzy_name('Belgium').should ==  [belgium2]
       end
     end
   end

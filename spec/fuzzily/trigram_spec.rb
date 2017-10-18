@@ -5,7 +5,7 @@ describe Fuzzily::String do
   def result(string)
     described_class.new(string).trigrams
   end
-  
+
   it 'splits strings into trigrams' do
     result('Paris').should == %w(**p *pa par ari ris is*)
   end
@@ -21,5 +21,9 @@ describe Fuzzily::String do
   it 'removes symbols and duplicates' do
     # The final ess, sse, se* would be dupes.
     result('Besse-en-Chandesse').should == %w(**b *be bes ess sse se* e*e *en en* n*c *ch cha han and nde des)
+  end
+
+  it 'retain numbers' do
+    result('678 street').should == %w(**6 *67 678 78* 8*s *st str tre ree eet et*)
   end
 end

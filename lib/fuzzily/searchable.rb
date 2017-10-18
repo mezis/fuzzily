@@ -18,6 +18,9 @@ module Fuzzily
       self.send(_o.trigram_association).delete_all
       String.new(self.send(_o.field)).scored_trigrams.each do |trigram, score|
         self.send(_o.trigram_association).build.tap do |record|
+          # I ran into problems where owner wasn't being set for some reason.
+          # I wasn't able to reproduce it in tests though :/
+          record.owner       = self
           record.score       = score
           record.trigram     = trigram
           record.fuzzy_field = _o.field.to_s

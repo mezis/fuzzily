@@ -14,7 +14,15 @@ describe Fuzzily::Searchable do
 
   subject do
     silence_warnings do
-      Stuff = Class.new(ActiveRecord::Base)
+      Stuff = Class.new(ActiveRecord::Base) do
+        def full_name
+          "#{first_name} #{last_name}"
+        end
+
+        def full_name_changed?
+          first_name_changed? || last_name_changed?
+        end
+      end
     end
     def Stuff.name ; 'Stuff' ; end
     Stuff
@@ -43,29 +51,58 @@ describe Fuzzily::Searchable do
   end
 
   describe '(callbacks)' do
-    before { subject.fuzzily_searchable :name }
+    context "with a database backed column" do
+      before { subject.fuzzily_searchable :name }
 
-    it 'generates trigram records on creation' do
-      subject.create!(:name => 'Paris')
-      subject.last.trigrams_for_name.should_not be_empty
+      it 'generates trigram records on creation' do
+        subject.create!(:name => 'Paris')
+        subject.last.trigrams_for_name.should_not be_empty
+      end
+
+      it 'generates the correct trigrams' do
+        record = subject.create!(:name => 'FOO')
+        Trigram.first.trigram.should    == '**f'
+        Trigram.first.owner_id.should   == record.id
+        Trigram.first.owner_type.should == 'Stuff'
+      end
+
+      it 'updates all trigram records on save' do
+        subject.create!(:name => 'Paris')
+        subject.first.update_attribute :name, 'Rome'
+        Trigram.all.map(&:trigram).should =~ %w(**r *ro rom ome me*)
+      end
+
+      it 'deletes all trigrams on destroy' do
+        subject.create!(:name => 'Paris').destroy
+        Trigram.all.should be_empty
+      end
     end
 
-    it 'generates the correct trigrams' do
-      record = subject.create!(:name => 'FOO')
-      Trigram.first.trigram.should    == '**f'
-      Trigram.first.owner_id.should   == record.id
-      Trigram.first.owner_type.should == 'Stuff'
-    end
+    context "with a virtual attribute" do
+      before { subject.fuzzily_searchable :full_name }
 
-    it 'updates all trigram records on save' do
-      subject.create!(:name => 'Paris')
-      subject.first.update_attribute :name, 'Rome'
-      Trigram.all.map(&:trigram).should =~ %w(**r *ro rom ome me*)
-    end
+      it 'generates trigram records on creation' do
+        subject.create!(:first_name => 'Joe', :last_name => 'Bloggs')
+        subject.last.trigrams_for_full_name.should_not be_empty
+      end
 
-    it 'deletes all trigrams on destroy' do
-      subject.create!(:name => 'Paris').destroy
-      Trigram.all.should be_empty
+      it 'generates the correct trigrams' do
+        record = subject.create!(:first_name => 'Joe', :last_name => 'Bloggs')
+        Trigram.first.trigram.should    == '**j'
+        Trigram.first.owner_id.should   == record.id
+        Trigram.first.owner_type.should == 'Stuff'
+      end
+
+      it 'updates all trigram records on save' do
+        subject.create!(:first_name => 'Joe', :last_name => 'Bloggs')
+        subject.first.update_attribute :first_name, 'Sally'
+        Trigram.all.map(&:trigram).should =~ ["**s", "*bl", "*sa", "all", "blo", "ggs", "gs*", "lly", "log", "ly*", "ogg", "sal", "y*b"]
+      end
+
+      it 'deletes all trigrams on destroy' do
+        subject.create!(:first_name => 'Joe', :last_name => 'Bloggs').destroy
+        Trigram.all.should be_empty
+      end
     end
   end
 

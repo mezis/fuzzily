@@ -43,6 +43,8 @@ class StuffMigration < ActiveRecord::Migration
   def self.up
     create_table :stuffs do |t|
       t.string :name
+      t.string :first_name
+      t.string :last_name
       t.string :data
       t.timestamps
     end

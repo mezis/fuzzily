@@ -19,7 +19,7 @@ module Fuzzily
     # Remove accents, downcase, replace spaces and word start with '*',
     # return list of normalized words
     def normalize
-      ActiveSupport::Multibyte::Chars.new(self).
+      ActiveSupport::Multibyte::Chars.new(self.to_s).
         mb_chars.normalize(:kd).gsub(/[^\x00-\x7F]/,'').downcase.to_s.
         gsub(/[^a-z]/,' ').
         gsub(/\s+/,'*').

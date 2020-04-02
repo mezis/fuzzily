@@ -13,17 +13,12 @@ Gem::Specification.new do |gem|
   gem.homepage      = "http://github.com/mezis/fuzzily"
   gem.license       = 'MIT'
 
-  gem.add_runtime_dependency 'activerecord', '>= 2.3.17'
+  gem.add_runtime_dependency "activerecord", ">= 5.1"
 
-  gem.add_development_dependency 'rspec'
-  gem.add_development_dependency 'rake'
-  gem.add_development_dependency 'appraisal'
-  gem.add_development_dependency 'pry'
-  gem.add_development_dependency 'pry-nav'
-  gem.add_development_dependency 'sqlite3'
-  gem.add_development_dependency 'pg'
-  gem.add_development_dependency 'mysql2'
-  gem.add_development_dependency 'coveralls'
+  gem.add_development_dependency "bundler"
+  gem.add_development_dependency "rake"
+  gem.add_development_dependency "rspec"
+  gem.add_development_dependency "sqlite3"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }

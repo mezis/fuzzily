@@ -1,7 +1,4 @@
-source ENV.fetch('GEM_SOURCE','https://rubygems.org')
-
-gem "activerecord", "~> 3.2.1"
+source ENV.fetch("GEM_SOURCE", "https://rubygems.org")
 
 # Specify your gem's dependencies in fuzzily.gemspec
 gemspec
-

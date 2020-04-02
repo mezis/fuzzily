@@ -1,10 +1,10 @@
 require "spec_helper"
 
 describe Fuzzily::Migration do
-  subject { Class.new(ActiveRecord::Migration[6.0]).extend(described_class) }
+  subject { Class.new(ActiveRecord::Migration[5.1]).extend(described_class) }
 
   it "is a proper migration" do
-    expect(subject.ancestors).to include(ActiveRecord::Migration[6.0])
+    expect(subject.ancestors).to include(ActiveRecord::Migration[5.1])
   end
 
   it "applies cleanly" do

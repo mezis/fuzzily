@@ -37,7 +37,7 @@ end
 
 # A test model we"ll need as a source of trigrams
 class Stuff < ActiveRecord::Base ; end
-class StuffMigration < ActiveRecord::Migration[6.0]
+class StuffMigration < ActiveRecord::Migration[5.1]
   def self.up
     create_table :stuffs do |t|
       t.string :name
@@ -62,7 +62,7 @@ RSpec.configure do |config|
 
     def prepare_trigrams_table
       ActiveRecord::Migration.suppress_messages do
-        Class.new(ActiveRecord::Migration[6.0]).extend(Fuzzily::Migration).up
+        Class.new(ActiveRecord::Migration[5.1]).extend(Fuzzily::Migration).up
       end
     end
 

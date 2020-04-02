@@ -154,12 +154,6 @@ module Fuzzily
     module Rails5ClassMethods
       include ClassMethods
 
-      def self.extended(base)
-        base.class_eval do
-          named_scope :offset, lambda { |*args| { offset: args.first } }
-        end
-      end
-
       private
 
       def _add_trigram_association(_o)

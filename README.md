@@ -27,6 +27,7 @@ with the same intent.
 
 - Dirty attributes behaviour has changed in after_save context.
   Use `saved_change_to_ATTR?` instead of `ATTR_changed?`!
+- Semi-breaking: The string is now being checked for `blank?` instead of `nil?` to prevent `***` ngrams
 
 ### Fixes
 

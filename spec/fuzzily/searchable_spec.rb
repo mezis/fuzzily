@@ -85,6 +85,12 @@ describe Fuzzily::Searchable do
       expect(Trigram.all).to be_empty
     end
 
+    it "ignores empty string values" do
+      subject.create!(name: "")
+      subject.last.update_fuzzy_name!
+      expect(Trigram.all).to be_empty
+    end
+
     if ActiveRecord::VERSION::MAJOR <= 3
       let(:fields) {[ :score, :fuzzy_field, :trigram ]}
       before { Trigram.attr_protected  fields }
@@ -108,6 +114,13 @@ describe Fuzzily::Searchable do
 
     it "ignores nil values" do
       subject.create!(name: nil)
+      Trigram.delete_all
+      subject.bulk_update_fuzzy_name
+      expect(Trigram.all).to be_empty
+    end
+
+    it "ignores empty string values" do
+      subject.create!(name: "")
       Trigram.delete_all
       subject.bulk_update_fuzzy_name
       expect(Trigram.all).to be_empty

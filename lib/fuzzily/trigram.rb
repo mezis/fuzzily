@@ -4,7 +4,7 @@ module Fuzzily
   class String < SimpleDelegator
 
     def trigrams
-      return [] if __getobj__.nil?
+      return [] if __getobj__.blank?
       normalized = self.normalize
       number_of_trigrams = normalized.length - 3
       trigrams = (0..number_of_trigrams).map { |index| normalized[index, 3] }.uniq

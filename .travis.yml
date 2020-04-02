@@ -7,9 +7,9 @@ before_script:
   - psql -c 'create database fuzzily_test;' -U postgres
   - mysql -e 'create database fuzzily_test;'
 script:
-  FUZZILY_ADAPTER=sqlite3 bundle exec rspec
-  FUZZILY_ADAPTER=mysql FUZZILY_DB_USER=travis bundle exec rspec
-  FUZZILY_ADAPTER=postgresql FUZZILY_DB_USER=postgres bundle exec rspec
+  - FUZZILY_ADAPTER=sqlite3 bundle exec rspec
+  - FUZZILY_ADAPTER=mysql FUZZILY_DB_USER=travis bundle exec rspec
+  - FUZZILY_ADAPTER=postgresql FUZZILY_DB_USER=postgres bundle exec rspec
 rvm:
   - 2.3.8
   - 2.4.9

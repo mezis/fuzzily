@@ -1,10 +1,7 @@
 # Fuzzily - fuzzy string matching for ActiveRecord
 
-[![Gem Version](https://badge.fury.io/rb/fuzzily.png)](http://badge.fury.io/rb/fuzzily)
-[![Build Status](https://travis-ci.org/mezis/fuzzily.png?branch=master)](https://travis-ci.org/mezis/fuzzily)
-[![Dependency Status](https://gemnasium.com/mezis/fuzzily.png)](https://gemnasium.com/mezis/fuzzily)
-[![Code Climate](https://codeclimate.com/github/mezis/fuzzily.png)](https://codeclimate.com/github/mezis/fuzzily)
-[![Coverage Status](https://coveralls.io/repos/mezis/fuzzily/badge.png?branch=coveralls)](https://coveralls.io/r/mezis/fuzzily?branch=coveralls)
+[![Gem Version](https://badge.fury.io/rb/fuzzily_reloaded.png)](https://badge.fury.io/rb/fuzzily_reloaded)
+[![Build Status](https://travis-ci.org/2called-chaos/fuzzily.png?branch=master)](https://travis-ci.org/2called-chaos/fuzzily)
 
 > Show me photos of **Marakech** !
 >
@@ -15,18 +12,32 @@ Fuzzily finds misspelled, prefix, or partial needles in a haystack of
 strings. It's a fast, [trigram](http://en.wikipedia.org/wiki/N-gram)-based, database-backed [fuzzy](http://en.wikipedia.org/wiki/Approximate_string_matching) string search/match engine for Rails.
 Loosely inspired from an [old blog post](http://unirec.blogspot.co.uk/2007/12/live-fuzzy-search-using-n-grams-in.html).
 
-Tested with ActiveRecord (2.3, 3.0, 3.1, 3.2, 4.0) on various Rubies (1.8.7, 1.9.3, 2.0.0, 2.1.0) and the most common adapters (SQLite3, MySQL, and PostgreSQL).
+Tested with ActiveRecord (5.1, 6.0) on various Rubies (2.3, 2.4, 2.5, 2.6, 2.7) and the most common adapters (SQLite3, MySQL, and PostgreSQL).
 
 If your dateset is big, if you need yet more speed, or do not use ActiveRecord,
 check out [blurrily](http://github.com/mezis/blurrily), another gem (backed with a C extension)
-with the same intent.  
+with the same intent.
+
+## Fork differences
+
+- Added support for Rails 5.1 and 6.0
+- Removed support for Rails <5.1
+
+### Breaking changes
+
+- Dirty attributes behaviour has changed in after_save context.
+  Use `saved_change_to_ATTR?` instead of `ATTR_changed?`!
+
+### Fixes
+
+- Fixed deprecation warning regarding uniqueness validator
 
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'fuzzily'
+    gem 'fuzzily_reloaded'
 
 And then execute:
 
@@ -34,7 +45,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install fuzzily
+    $ gem install fuzzily_reloaded
 
 ## Usage
 
@@ -54,7 +65,7 @@ end
 Create a migration for it:
 
 ```ruby
-class AddTrigramsModel < ActiveRecord::Migration
+class AddTrigramsModel < ActiveRecord::Migration[6.0]
   extend Fuzzily::Migration
 end
 ```
@@ -91,7 +102,7 @@ MyStuff.find(123).update_fuzzy_name!
 
 ## Indexing more than one field
 
-Just list all the field you want to index, or call `fuzzily_searchable` more than once: 
+Just list all the field you want to index, or call `fuzzily_searchable` more than once:
 
 ```ruby
 class MyStuff < ActiveRecord::Base
@@ -115,7 +126,7 @@ class AddTrigramsModel < ActiveRecord::Migration
 end
 
 class MyStuff < ActiveRecord::Base
-  fuzzily_searchable :name, :class_name => 'CustomTrigram'
+  fuzzily_searchable :name, class_name: 'CustomTrigram'
 end
 ```
 
@@ -153,7 +164,7 @@ If you set your Model primary key (id) AS `VARCHAR` instead of `INT`, you will n
 Your searchable fields do not have to be stored, they can be dynamic methods
 too. Just remember to add a virtual change method as well.
 For instance, if you model has `first_name` and `last_name` attributes, and you
-want to index a compound `name` dynamic attribute: 
+want to index a compound `name` dynamic attribute:
 
 ```ruby
 class Employee < ActiveRecord::Base
@@ -162,8 +173,8 @@ class Employee < ActiveRecord::Base
     "#{first_name} #{last_name}"
   end
 
-  def name_changed?
-    first_name_changed? || last_name_changed?
+  def saved_change_to_name?
+    saved_change_to_first_name? || saved_change_to_last_name?
   end
 end
 ```
@@ -183,7 +194,8 @@ end
 
 MIT licence. Quite permissive if you ask me.
 
-Copyright (c) 2013 HouseTrip Ltd.
+Copyright (c) 2013, HouseTrip Ltd.
+Copyright (c) 2020, Sven Pachnit aka. 2called-chaos (forked)
 
 ## Contributing
 
@@ -194,5 +206,6 @@ Copyright (c) 2013 HouseTrip Ltd.
 5. Create a new Pull Request
 
 
+Thanks to @mezis for creating this literal gem.
 Thanks to @bclennox, @fdegiuli, @nickbender, @Shanison, @rickbutton for pointing out
 and/or helping on various issues.

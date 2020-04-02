@@ -1,12 +1,7 @@
 ---
 language: ruby
-before_install: "gem install bundler"
-bundler_args: --without tools
 script: bundle exec rspec
 rvm:
-  - 2.0.0
-  - 2.1.10
-  - 2.2.10
   - 2.3.8
   - 2.4.9
   - 2.5.7
@@ -23,6 +18,11 @@ matrix:
     - rvm: ruby-head
     - rvm: jruby-head
     - rvm: jruby-9.2.6.0
+  exclude:
+    - rvm: 2.3.8
+      gemfile: gemfiles/rails60.gemfile
+    - rvm: 2.4.9
+      gemfile: gemfiles/rails60.gemfile
   fast_finish: true
 branches:
   only: master

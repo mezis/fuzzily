@@ -23,6 +23,8 @@ GEM
     i18n (1.8.2)
       concurrent-ruby (~> 1.0)
     minitest (5.14.0)
+    mysql2 (0.5.3)
+    pg (1.2.3)
     rake (13.0.1)
     rspec (3.9.0)
       rspec-core (~> 3.9.0)
@@ -49,6 +51,8 @@ PLATFORMS
 DEPENDENCIES
   bundler
   fuzzily_reloaded!
+  mysql2
+  pg
   rake
   rspec
   sqlite3

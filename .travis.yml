@@ -1,6 +1,12 @@
 ---
 language: ruby
-script: bundle exec rspec
+before_script:
+  - psql -c 'create database fuzzily_test;' -U postgres
+  - mysql -e 'create database fuzzily_test;'
+script:
+  FUZZILY_ADAPTER=sqlite3 bundle exec rspec
+  FUZZILY_ADAPTER=mysql bundle exec rspec
+  FUZZILY_ADAPTER=postgresql bundle exec rspec
 rvm:
   - 2.3.8
   - 2.4.9

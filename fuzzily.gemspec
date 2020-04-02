@@ -18,6 +18,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "sqlite3"
+  spec.add_development_dependency "pg"
+  spec.add_development_dependency "mysql2"
 
   spec.files         = `git ls-files`.split($/)
   spec.executables   = spec.files.grep(%r{^bin/}).map{ |f| File.basename(f) }

@@ -1,3 +1,4 @@
+Copyright (c) 2020, Sven Pachnit aka. 2called-chaos (forked)
 Copyright (c) 2012 HouseTrip Ltd
 
 MIT License

@@ -1,14 +1,13 @@
-require 'fuzzily/trigram'
-require 'ostruct'
+require "fuzzily/trigram"
+require "ostruct"
 
 module Fuzzily
   module Searchable
 
     def self.included(by)
       case ActiveRecord::VERSION::MAJOR
-      when 2 then by.extend Rails2ClassMethods
-      when 3 then by.extend Rails3ClassMethods
-      when 4 then by.extend Rails4ClassMethods
+        when 5 then by.extend Rails5ClassMethods
+        when 6 then by.extend Rails6ClassMethods
       end
     end
 
@@ -57,7 +56,7 @@ module Fuzzily
       def _load_for_ids(ids)
         {}.tap do |result|
           results = if respond_to? :where
-            where(:id => ids)
+            where(id: ids)
           else
             find(:all, ids)
           end
@@ -67,17 +66,19 @@ module Fuzzily
 
       def _bulk_update_fuzzy(_o)
         trigram_class = _o.trigram_class_name.constantize
-
         supports_bulk_inserts  =
           connection.class.name !~ /sqlite/i ||
-          connection.send(:sqlite_version) >= '3.7.11'
+          (
+            defined?(SQLite3::SQLITE_VERSION) &&
+            Gem::Version.new(SQLite3::SQLITE_VERSION) >= Gem::Version.new("3.7.11")
+          )
 
-        _with_included_trigrams(_o).find_in_batches(:batch_size => 100) do |batch|
+        _with_included_trigrams(_o).find_in_batches(batch_size: 100) do |batch|
           inserts = []
           batch.each do |record|
             data = Fuzzily::String.new(record.send(_o.field))
             data.scored_trigrams.each do |trigram, score|
-              inserts << sanitize_sql_array(['(?,?,?,?,?)', self.name, record.id, _o.field.to_s, score, trigram])
+              inserts << sanitize_sql_array(["(?,?,?,?,?)", self.name, record.id, _o.field.to_s, score, trigram])
             end
           end
 
@@ -88,11 +89,11 @@ module Fuzzily
             VALUES
           } % [
             c.quote_table_name(trigram_class.table_name),
-            c.quote_column_name('owner_type'),
-            c.quote_column_name('owner_id'),
-            c.quote_column_name('fuzzy_field'),
-            c.quote_column_name('score'),
-            c.quote_column_name('trigram')
+            c.quote_column_name("owner_type"),
+            c.quote_column_name("owner_id"),
+            c.quote_column_name("fuzzy_field"),
+            c.quote_column_name("score"),
+            c.quote_column_name("trigram")
           ]
 
           trigram_class.transaction do
@@ -114,20 +115,20 @@ module Fuzzily
         class_variable_defined?(:"@@fuzzily_searchable_#{field}") and return
 
         _o = OpenStruct.new(
-          :field                  => field,
-          :trigram_class_name     => options.fetch(:class_name, 'Trigram'),
-          :trigram_association    => "trigrams_for_#{field}".to_sym,
-          :update_trigrams_method => "update_fuzzy_#{field}!".to_sym,
-          :async                  => options.fetch(:async, false)
+          field:                  field,
+          trigram_class_name:     options.fetch(:class_name, "Trigram"),
+          trigram_association:    "trigrams_for_#{field}".to_sym,
+          update_trigrams_method: "update_fuzzy_#{field}!".to_sym,
+          async:                  options.fetch(:async, false)
         )
 
         _add_trigram_association(_o)
 
-        singleton_class.send(:define_method,"find_by_fuzzy_#{field}".to_sym) do |*args|
+        singleton_class.send(:define_method, "find_by_fuzzy_#{field}".to_sym) do |*args|
           _find_by_fuzzy(_o, *args)
         end
 
-        singleton_class.send(:define_method,"bulk_update_fuzzy_#{field}".to_sym) do
+        singleton_class.send(:define_method, "bulk_update_fuzzy_#{field}".to_sym) do
           _bulk_update_fuzzy(_o)
         end
 
@@ -140,7 +141,7 @@ module Fuzzily
         end
 
         after_save do |record|
-          next unless record.send("#{field}_changed?".to_sym)
+          next unless record.send("saved_change_to_#{field}?".to_sym)
 
           record.send(_o.update_trigrams_method)
         end
@@ -150,53 +151,24 @@ module Fuzzily
       end
     end
 
-    module Rails2Rails3ClassMethods
-      private
-
-      def _add_trigram_association(_o)
-        has_many _o.trigram_association,
-          :class_name => _o.trigram_class_name,
-          :as         => :owner,
-          :conditions => { :fuzzy_field => _o.field.to_s },
-          :dependent  => :destroy,
-          :autosave   => true
-      end
-
-      def _with_included_trigrams(_o)
-        self.scoped(:include => _o.trigram_association)
-      end
-    end
-
-    module Rails2ClassMethods
+    module Rails5ClassMethods
       include ClassMethods
-      include Rails2Rails3ClassMethods
 
       def self.extended(base)
         base.class_eval do
-          named_scope :offset, lambda { |*args| { :offset => args.first } }
+          named_scope :offset, lambda { |*args| { offset: args.first } }
         end
       end
-    end
-
-    module Rails3ClassMethods
-      include ClassMethods
-      include Rails2Rails3ClassMethods
-    end
-
-
-
-    module Rails4ClassMethods
-      include ClassMethods
 
       private
 
       def _add_trigram_association(_o)
         has_many _o.trigram_association,
-          lambda { where(:fuzzy_field => _o.field.to_s) },
-          :class_name => _o.trigram_class_name,
-          :as         => :owner,
-          :dependent  => :delete_all,
-          :autosave   => true
+          lambda { where(fuzzy_field: _o.field.to_s) },
+          class_name: _o.trigram_class_name,
+          as:         :owner,
+          dependent:  :delete_all,
+          autosave:   true
       end
 
       def _with_included_trigrams(_o)
@@ -204,5 +176,8 @@ module Fuzzily
       end
     end
 
+    module Rails6ClassMethods
+      include Rails5ClassMethods
+    end
   end
 end

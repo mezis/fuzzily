@@ -58,7 +58,7 @@ describe Fuzzily::Searchable do
     it "updates all trigram records on save" do
       subject.create!(name: "Paris")
       subject.first.update_attribute :name, "Rome"
-      expect(Trigram.all.map(&:trigram)).to match %w(**r *ro rom ome me*)
+      expect(Trigram.all.map(&:trigram).sort).to match %w(**r *ro me* ome rom)
     end
 
     it "deletes all trigrams on destroy" do

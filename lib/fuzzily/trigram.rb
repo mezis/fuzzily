@@ -22,7 +22,7 @@ module Fuzzily
       ActiveSupport::Multibyte::Chars.new(self.to_s)
         .mb_chars.unicode_normalize(:nfkd).to_s.downcase
         .gsub(/[^\x00-\x7F]/, "")
-        .gsub(/[^a-z]/, " ")
+        .gsub(/[^a-z\d]/, " ")
         .gsub(/\s+/, "*")
         .gsub(/^/, "**")
         .gsub(/$/, "*")

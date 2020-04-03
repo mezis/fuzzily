@@ -31,6 +31,7 @@ with the same intent.
 
 ### Fixes
 
+- Numbers are now supported but using a Converter is recommended
 - Fixed deprecation warning regarding uniqueness validator
 
 
@@ -100,6 +101,14 @@ You can force an update on a specific record with
 ```ruby
 MyStuff.find(123).update_fuzzy_name!
 ```
+
+## Handling numbers
+
+Numbers `\d` are supported but it is recommended to evaluate a custom conversion.
+We had way better results for product names that included both, arabic and roman numbers,
+with the following converter (note that both the search input and fuzzily input are converted):
+
+https://gist.github.com/2called-chaos/64f64fc7fb35959fbf68f6018494a698
 
 ## Indexing more than one field
 

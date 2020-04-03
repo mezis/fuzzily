@@ -13,6 +13,10 @@ describe Fuzzily::String do
     expect(result("Montélimar")).to eq %w(**m *mo mon ont nte tel eli lim ima mar ar*)
   end
 
+  it "allows numbers" do
+    expect(result("GTA 5")).to eq %w(**g *gt gta ta* a*5 *5*)
+  end
+
   it "handles multi word strings" do
     expect(result("Le Mans")).to eq %w(**l *le le* e*m *ma man ans ns*)
   end

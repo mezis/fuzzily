@@ -20,7 +20,7 @@ with the same intent.
 
 ## Fork differences
 
-- Added support for Rails 5.1 and 6.0
+- Added support for Rails 5.1, 6, and 7
 - Removed support for Rails <5.1
 
 ### Breaking changes

@@ -5,10 +5,7 @@ module Fuzzily
   module Searchable
 
     def self.included(by)
-      case ActiveRecord::VERSION::MAJOR
-        when 5 then by.extend Rails5ClassMethods
-        when 6 then by.extend Rails6ClassMethods
-      end
+      by.extend ClassMethods
     end
 
     private
@@ -149,12 +146,6 @@ module Fuzzily
         class_variable_set(:"@@fuzzily_searchable_#{field}", true)
         self
       end
-    end
-
-    module Rails5ClassMethods
-      include ClassMethods
-
-      private
 
       def _add_trigram_association(_o)
         has_many _o.trigram_association,
@@ -168,10 +159,6 @@ module Fuzzily
       def _with_included_trigrams(_o)
         self.includes(_o.trigram_association)
       end
-    end
-
-    module Rails6ClassMethods
-      include Rails5ClassMethods
     end
   end
 end

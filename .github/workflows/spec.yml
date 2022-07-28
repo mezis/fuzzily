@@ -1,0 +1,90 @@
+name: spec
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.ruby == 'head' }}
+    env:
+      DB: ${{ matrix.db }}
+      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
+
+    strategy:
+      matrix:
+        ruby:
+          # - "ruby-head"
+          - "3.1"
+          - "3.0"
+          - "2.7"
+          - "2.6"
+          - "2.5"
+        gemfile:
+          - gemfiles/rails51.gemfile
+          - gemfiles/rails60.gemfile
+          - gemfiles/rails70.gemfile
+        db:
+          - mysql
+          - postgresql
+          - sqlite3
+        exclude:
+          - ruby: "2.5"
+            gemfile: gemfiles/rails70.gemfile
+          - ruby: "2.6"
+            gemfile: gemfiles/rails70.gemfile
+          - ruby: "3.0"
+            gemfile: gemfiles/rails51.gemfile
+          - ruby: "3.1"
+            gemfile: gemfiles/rails51.gemfile
+
+    services:
+      sqlite3:
+        env:
+          FUZZILY_ADAPTER: sqlite3
+      postgres:
+        image: postgres:10
+        env:
+          FUZZILY_ADAPTER: postgresql
+          FUZZILY_DB_USER: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: fuzzily_test
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      mysql:
+        image: mysql:8
+        env:
+          FUZZILY_ADAPTER: mysql
+          FUZZILY_DB_USER: travis
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+    - name: Create MySQL test database with utf8mb4 charset
+      if: ${{ matrix.db == 'mysql' }}
+      run: |
+        mysql -uroot --host=127.0.0.1 -e "CREATE DATABASE fuzzily_test CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci"
+    - name: Run tests
+      run: bundle exec rake

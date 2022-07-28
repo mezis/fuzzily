@@ -32,8 +32,8 @@ jobs:
           - gemfiles/rails70.gemfile
         db:
           - mysql
-          - postgresql
-          - sqlite3
+          # - postgresql
+          # - sqlite3
         exclude:
           - ruby: "2.5"
             gemfile: gemfiles/rails70.gemfile
@@ -66,7 +66,7 @@ jobs:
         image: mysql:8
         env:
           FUZZILY_ADAPTER: mysql
-          FUZZILY_DB_USER: travis
+          FUZZILY_DB_USER: root
           MYSQL_ALLOW_EMPTY_PASSWORD: true
         ports: ['3306:3306']
         options: >-
